@@ -48,15 +48,17 @@ export default function SearchBar({ tables }) {
           open: true,
           element: ObjectType.TABLE,
         }));
-        document
-          .getElementById(`scroll_table_${tableId}`)
-          .scrollIntoView({ behavior: "smooth" });
-
-        if (!children) {
+        setTimeout(() => {
           document
-            .getElementById(`scroll_table_${tableId}_input_${id}`)
-            .focus();
-        }
+            .getElementById(`scroll_table_${tableId}`)
+            .scrollIntoView({ behavior: "smooth" });
+
+          if (!children) {
+            document
+              .getElementById(`scroll_table_${tableId}_input_${id}`)
+              .focus();
+          }
+        }, 60);
       }}
       onChangeWithObject
       className="w-full"

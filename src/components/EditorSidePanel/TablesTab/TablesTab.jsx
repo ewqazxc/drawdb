@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Collapse, Button } from "@douyinfe/semi-ui";
 import { IconPlus } from "@douyinfe/semi-icons";
 import { useSelect, useDiagram } from "../../../hooks";
@@ -10,8 +11,13 @@ import { useTranslation } from "react-i18next";
 export default function TablesTab() {
   const { tables, addTable } = useDiagram();
   const { selectedElement, setSelectedElement } = useSelect();
+  const [activeKey, setActiveKey] = useState("");
   const { t } = useTranslation();
 
+  const selectedActiveKey =
+    (selectedElement.open && selectedElement.element === ObjectType.TABLE
+      ? `${selectedElement.id}`
+      : "") || activeKey;
   return (
     <>
       <div className="flex gap-2">
@@ -26,21 +32,18 @@ export default function TablesTab() {
         <Empty title={t("no_tables")} text={t("no_tables_text")} />
       ) : (
         <Collapse
-          activeKey={
-            selectedElement.open && selectedElement.element === ObjectType.TABLE
-              ? `${selectedElement.id}`
-              : ""
-          }
+          activeKey={[selectedActiveKey]}
           keepDOM
           lazyRender
-          onChange={(k) =>
+          onChange={(k) => {
+            setActiveKey(k[0] ?? "");
             setSelectedElement((prev) => ({
               ...prev,
               open: true,
               id: parseInt(k),
               element: ObjectType.TABLE,
             }))
-          }
+          }}
           accordion
         >
           {tables.map((t) => (
@@ -60,7 +63,7 @@ export default function TablesTab() {
                 }
                 itemKey={`${t.id}`}
               >
-                <TableInfo data={t} />
+                {selectedActiveKey === t.id + "" && <TableInfo data={t} />}
               </Collapse.Panel>
             </div>
           ))}
