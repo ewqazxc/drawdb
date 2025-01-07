@@ -670,7 +670,11 @@ export default function ControlPanel({
         break;
     }
   };
+  const isCopyText = ()=>{
+    return !!window.getSelection()?.toString();
+  };
   const copy = () => {
+    if(isCopyText()) return;
     switch (selectedElement.element) {
       case ObjectType.TABLE:
         navigator.clipboard
@@ -725,6 +729,7 @@ export default function ControlPanel({
     });
   };
   const cut = () => {
+    if(isCopyText()) return;
     copy();
     del();
   };
@@ -1369,9 +1374,9 @@ export default function ControlPanel({
   useHotkeys("ctrl+o, meta+o", open, { preventDefault: true });
   useHotkeys("ctrl+e, meta+e", edit, { preventDefault: true });
   useHotkeys("ctrl+d, meta+d", duplicate, { preventDefault: true });
-  useHotkeys("ctrl+c, meta+c", copy, { preventDefault: true });
+  useHotkeys("ctrl+c, meta+c", copy, { preventDefault: ()=>!isCopyText()});
   useHotkeys("ctrl+v, meta+v", paste, { preventDefault: true });
-  useHotkeys("ctrl+x, meta+x", cut, { preventDefault: true });
+  useHotkeys("ctrl+x, meta+x", cut, { preventDefault: ()=>!isCopyText()});
   useHotkeys("delete", del, { preventDefault: true });
   useHotkeys("ctrl+shift+g, meta+shift+g", viewGrid, { preventDefault: true });
   useHotkeys("ctrl+up, meta+up", zoomIn, { preventDefault: true });
