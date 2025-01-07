@@ -85,11 +85,25 @@ export default function ControlPanel({
   const [sidesheet, setSidesheet] = useState(SIDESHEET.NONE);
   const [showEditName, setShowEditName] = useState(false);
   const [importDb, setImportDb] = useState("");
+  const getFileName = ()=>`${title}_${new Date().toISOString()}`;
   const [exportData, setExportData] = useState({
     data: null,
-    filename: `${title}_${new Date().toISOString()}`,
+    filename: getFileName(),
     extension: "",
   });
+  const changeExportData = (arg) => {
+    const filename = getFileName();
+    if (typeof arg === "function") {
+      setExportData((pre) => {
+        return arg({
+          ...pre,
+          filename,
+        })
+      });
+    } else {
+      setExportData({filename,...arg});
+    }
+  };
   const { saveState, setSaveState } = useSaveState();
   const { layout, setLayout } = useLayout();
   const { settings, setSettings } = useSettings();
@@ -847,7 +861,7 @@ export default function ControlPanel({
                   types: types,
                   database: database,
                 });
-                setExportData((prev) => ({
+                changeExportData((prev) => ({
                   ...prev,
                   data: src,
                   extension: "sql",
@@ -863,7 +877,7 @@ export default function ControlPanel({
                   types: types,
                   database: database,
                 });
-                setExportData((prev) => ({
+                changeExportData((prev) => ({
                   ...prev,
                   data: src,
                   extension: "sql",
@@ -879,7 +893,7 @@ export default function ControlPanel({
                   types: types,
                   database: database,
                 });
-                setExportData((prev) => ({
+                changeExportData((prev) => ({
                   ...prev,
                   data: src,
                   extension: "sql",
@@ -895,7 +909,7 @@ export default function ControlPanel({
                   types: types,
                   database: database,
                 });
-                setExportData((prev) => ({
+                changeExportData((prev) => ({
                   ...prev,
                   data: src,
                   extension: "sql",
@@ -911,7 +925,7 @@ export default function ControlPanel({
                   types: types,
                   database: database,
                 });
-                setExportData((prev) => ({
+                changeExportData((prev) => ({
                   ...prev,
                   data: src,
                   extension: "sql",
@@ -930,7 +944,7 @@ export default function ControlPanel({
             database: database,
             enums: enums,
           });
-          setExportData((prev) => ({
+          changeExportData((prev) => ({
             ...prev,
             data: src,
             extension: "sql",
@@ -942,7 +956,7 @@ export default function ControlPanel({
           {
             PNG: () => {
               toPng(document.getElementById("canvas")).then(function (dataUrl) {
-                setExportData((prev) => ({
+                changeExportData((prev) => ({
                   ...prev,
                   data: dataUrl,
                   extension: "png",
@@ -955,7 +969,7 @@ export default function ControlPanel({
             JPEG: () => {
               toJpeg(document.getElementById("canvas"), { quality: 0.95 }).then(
                 function (dataUrl) {
-                  setExportData((prev) => ({
+                  changeExportData((prev) => ({
                     ...prev,
                     data: dataUrl,
                     extension: "jpeg",
@@ -982,7 +996,7 @@ export default function ControlPanel({
                 null,
                 2,
               );
-              setExportData((prev) => ({
+              changeExportData((prev) => ({
                 ...prev,
                 data: result,
                 extension: "json",
@@ -994,7 +1008,7 @@ export default function ControlPanel({
               const filter = (node) => node.tagName !== "i";
               toSvg(document.getElementById("canvas"), { filter: filter }).then(
                 function (dataUrl) {
-                  setExportData((prev) => ({
+                  changeExportData((prev) => ({
                     ...prev,
                     data: dataUrl,
                     extension: "svg",
@@ -1020,7 +1034,7 @@ export default function ControlPanel({
                   canvas.offsetWidth,
                   canvas.offsetHeight,
                 );
-                doc.save(`${exportData.filename}.pdf`);
+                doc.save(`${getFileName()}.pdf`);
               });
             },
           },
@@ -1045,7 +1059,7 @@ export default function ControlPanel({
               const blob = new Blob([result], {
                 type: "text/plain;charset=utf-8",
               });
-              saveAs(blob, `${exportData.filename}.ddb`);
+              saveAs(blob, `${getFileName()}.ddb`);
             },
           },
           {
@@ -1059,7 +1073,7 @@ export default function ControlPanel({
                 database: database,
                 title: title,
               });
-              setExportData((prev) => ({
+              changeExportData((prev) => ({
                 ...prev,
                 data: result,
                 extension: "md",
@@ -1079,7 +1093,7 @@ export default function ControlPanel({
                 ...(databases[database].hasTypes && { types: types }),
                 ...(databases[database].hasEnums && { enums: enums }),
               });
-              setExportData((prev) => ({
+              changeExportData((prev) => ({
                 ...prev,
                 data: result,
                 extension: "md",
@@ -1405,7 +1419,7 @@ export default function ControlPanel({
       <Modal
         modal={modal}
         exportData={exportData}
-        setExportData={setExportData}
+        setExportData={changeExportData}
         title={title}
         setTitle={setTitle}
         setDiagramId={setDiagramId}
