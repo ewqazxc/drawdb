@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @layer base {
+
   /*
    * Workaround to allow proper bottom positioning for fixed
    * elements in mobile browsers with collapsing url bars:
@@ -13,6 +14,7 @@
   body {
     @apply h-full min-h-full;
   }
+
   #root {
     @apply h-full min-h-full;
   }
@@ -46,19 +48,15 @@
   background-color: rgba(var(--semi-grey-2), 1);
 }
 
-.semi-button.semi-button-primary:not(.semi-button-light):not(
-    .semi-button-borderless
-  ) {
+.semi-button.semi-button-primary:not(.semi-button-light):not(.semi-button-borderless) {
   background-color: rgba(var(--semi-blue-5), 1);
 }
 
-.semi-button.semi-button-primary:not(.semi-button-light):not(
-    .semi-button-borderless
-  ):hover {
+.semi-button.semi-button-primary:not(.semi-button-light):not(.semi-button-borderless):hover {
   background-color: rgba(var(--semi-blue-6), 1);
 }
 
-.semi-spin-wrapper{
+.semi-spin-wrapper {
   color: inherit;
 }
 
@@ -153,6 +151,7 @@
   -ms-animation-delay: 3s;
   -webkit-animation-delay: 3s;
 }
+
 .sliding-vertical span:nth-child(3) {
   animation-delay: 6s;
   -ms-animation-delay: 6s;
@@ -163,26 +162,37 @@
   0% {
     opacity: 0;
   }
+
   5% {
     opacity: 0;
     transform: translateY(-18px);
   }
+
   10% {
     opacity: 1;
     transform: translateY(0px);
   }
+
   25% {
     opacity: 1;
     transform: translateY(0px);
   }
+
   30% {
     opacity: 0;
     transform: translateY(18px);
   }
+
   80% {
     opacity: 0;
   }
+
   100% {
     opacity: 0;
   }
+}
+
+.child-h-full>div {
+  height: 100%;
+  overflow: hidden;
 }

@@ -11,7 +11,7 @@ export default function EnumsTab() {
   const { t } = useTranslation();
 
   return (
-    <div>
+    <>
       <div className="flex gap-2">
         <SearchBar />
         <div>
@@ -23,7 +23,7 @@ export default function EnumsTab() {
       {enums.length <= 0 ? (
         <Empty title={t("no_enums")} text={t("no_enums_text")} />
       ) : (
-        <Collapse accordion>
+        <Collapse accordion className="overflow-auto">
           {enums.map((e, i) => (
             <Collapse.Panel
               key={`enum_${i}`}
@@ -40,6 +40,6 @@ export default function EnumsTab() {
           ))}
         </Collapse>
       )}
-    </div>
+    </>
   );
 }

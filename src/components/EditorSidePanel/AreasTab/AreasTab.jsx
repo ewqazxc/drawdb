@@ -11,7 +11,7 @@ export default function AreasTab() {
   const { t } = useTranslation();
 
   return (
-    <div>
+    <>
       <div className="flex gap-2">
         <SearchBar />
         <div>
@@ -26,12 +26,12 @@ export default function AreasTab() {
           text={t("no_subject_areas_text")}
         />
       ) : (
-        <div className="p-2">
+        <div className="p-2 overflow-auto">
           {areas.map((a, i) => (
             <AreaInfo data={a} key={"area_" + i} i={i} />
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 }

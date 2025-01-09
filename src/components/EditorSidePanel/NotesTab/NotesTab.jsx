@@ -43,6 +43,7 @@ export default function NotesTab() {
             }));
           }}
           accordion
+          className="overflow-auto"
         >
           {notes.map((n, i) => (
             <NoteInfo data={n} key={i} nid={i} />

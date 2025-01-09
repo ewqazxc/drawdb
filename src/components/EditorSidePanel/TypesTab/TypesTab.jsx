@@ -60,6 +60,7 @@ export default function TypesTab() {
             }))
           }
           accordion
+          className="overflow-auto"
         >
           {types.map((t, i) => (
             <TypeInfo data={t} key={i} index={i} />

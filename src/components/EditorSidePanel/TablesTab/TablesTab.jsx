@@ -45,6 +45,7 @@ export default function TablesTab() {
             }))
           }}
           accordion
+          className="overflow-auto"
         >
           {tables.map((t) => (
             <div id={`scroll_table_${t.id}`} key={t.id}>

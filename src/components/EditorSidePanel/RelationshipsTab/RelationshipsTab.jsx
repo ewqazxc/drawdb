@@ -38,6 +38,7 @@ export default function RelationshipsTab() {
             }))
           }
           accordion
+          className="overflow-auto"
         >
           {relationships.map((r) => (
             <div id={`scroll_ref_${r.id}`} key={"relationship_" + r.id}>

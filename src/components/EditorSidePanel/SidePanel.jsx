@@ -67,11 +67,13 @@ export default function SidePanel({ width, resize, setResize }) {
             }
             collapsible
             tabBarStyle={{ direction: "ltr" }}
+            className="flex flex-col h-full overflow-hidden"
+            contentStyle={{ height: "100%", overflow: "hidden" }}
           >
             {tabList.length &&
               tabList.map((tab) => (
-                <TabPane tab={tab.tab} itemKey={tab.itemKey} key={tab.itemKey}>
-                  <div className="p-2">{tab.component}</div>
+                <TabPane className="h-full overflow-hidden child-h-full" tab={tab.tab} itemKey={tab.itemKey} key={tab.itemKey}>
+                  <div className="p-2 h-full overflow-hidden flex flex-col">{tab.component}</div>
                 </TabPane>
               ))}
           </Tabs>
@@ -83,9 +85,8 @@ export default function SidePanel({ width, resize, setResize }) {
         )}
       </div>
       <div
-        className={`flex justify-center items-center p-1 h-auto hover-2 cursor-col-resize ${
-          resize && "bg-semi-grey-2"
-        }`}
+        className={`flex justify-center items-center p-1 h-auto hover-2 cursor-col-resize ${resize && "bg-semi-grey-2"
+          }`}
         onPointerDown={(e) => e.isPrimary && setResize(true)}
       >
         <div className="w-1 border-x border-color h-1/6" />
