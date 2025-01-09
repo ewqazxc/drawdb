@@ -11,6 +11,6 @@ DrawDB is a robust and user-friendly database entity relationship (DBER) editor 
 
 ## Fork
 
-GitHub Pages 地址：<a href="https://ewqazxc.github.io/drawdb" target="_blank">https://ewqazxc.github.io/drawdb</a>
+GitHub Pages 地址：<a href="https://ewqazxc.github.io/drawdb" target="blank">https://ewqazxc.github.io/drawdb</a>
 
 
