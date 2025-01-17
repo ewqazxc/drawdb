@@ -8,8 +8,8 @@ import {
   Popover,
 } from "@douyinfe/semi-ui";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
-import { useDiagram, useUndoRedo } from "../../../hooks";
-import { Action, ObjectType, defaultBlue } from "../../../data/constants";
+import { useDiagram, useUndoRedo, useSaveState } from "../../../hooks";
+import { Action, ObjectType, defaultBlue, State } from "../../../data/constants";
 import ColorPalette from "../../ColorPicker";
 import TableField from "./TableField";
 import IndexDetails from "./IndexDetails";
@@ -18,6 +18,7 @@ import { dbToTypes } from "../../../data/datatypes";
 
 export default function TableInfo({ data }) {
   const { t } = useTranslation();
+  const { setSaveState } = useSaveState();
   const [indexActiveKey, setIndexActiveKey] = useState("");
   const { deleteTable, updateTable, updateField, setRelationships, database } =
     useDiagram();
@@ -143,6 +144,7 @@ export default function TableInfo({ data }) {
                 return e;
               }),
             );
+            setSaveState(State.SAVING);
           }}
           onDragEnd={(e) => {
             e.preventDefault();
