@@ -211,6 +211,15 @@ const zh = {
     generic: "通用的",
     generic_description: "通用的图表可以导出为任何SQL风格，但支持的数据类型较少。",
     unsigned: "无符号",
+    share: "分享",
+    unshare: "取消分享",
+    copy_link: "复制链接",
+    readme: "README",
+    failed_to_load: "加载失败。确保链接正确。",
+    share_info:
+      "* 共享此链接不会创建实时协作会话。",
+    show_relationship_labels: "显示关系标签",
+    show_debug_coordinates: "显示调试坐标",
   },
 };
 
