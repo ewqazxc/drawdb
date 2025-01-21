@@ -1,5 +1,6 @@
 import { Cardinality, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
+import { formatSQLRelationshipName } from "../formatUtils";
 import { buildSQLFromAST } from "./shared";
 
 const affinity = {
@@ -138,8 +139,7 @@ export function fromMSSQL(ast, diagramDb = DB.GENERIC) {
               );
               if (startFieldId === -1) return;
 
-              relationship.name =
-                "fk_" + startTable + "_" + startField + "_" + endTable;
+              relationship.name = formatSQLRelationshipName(startTable, startField, endTable);
               relationship.startTableId = startTableId;
               relationship.endTableId = endTableId;
               relationship.endFieldId = endFieldId;
@@ -244,8 +244,7 @@ export function fromMSSQL(ast, diagramDb = DB.GENERIC) {
           );
           if (startFieldId === -1) return;
 
-          relationship.name =
-            "fk_" + startTable + "_" + startField + "_" + endTable;
+          relationship.name = formatSQLRelationshipName(startTable, startField, endTable);
           relationship.startTableId = startTableId;
           relationship.startFieldId = startFieldId;
           relationship.endTableId = endTableId;

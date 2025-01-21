@@ -22,6 +22,7 @@ import { useDiagram, useUndoRedo } from "../../../hooks";
 import i18n from "../../../i18n/i18n";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
+import { formatRelationshipName } from "../../../utils/formatUtils";
 
 const columns = [
   {
@@ -71,15 +72,18 @@ export default function RelationshipInfo({ data }) {
       prev.map((e, idx) =>
         idx === data.id
           ? {
-              ...e,
-              name: `fk_${tables[e.endTableId].name}_${
-                tables[e.endTableId].fields[e.endFieldId].name
-              }_${tables[e.startTableId].name}`,
-              startTableId: e.endTableId,
-              startFieldId: e.endFieldId,
-              endTableId: e.startTableId,
-              endFieldId: e.startFieldId,
-            }
+            ...e,
+            name: formatRelationshipName(
+              {
+                startTableId: e.endTableId, startFieldId: e.endFieldId,
+                endTableId: e.startTableId, endFieldId: e.startFieldId
+              },
+              tables),
+            startTableId: e.endTableId,
+            startFieldId: e.endFieldId,
+            endTableId: e.startTableId,
+            endFieldId: e.startFieldId,
+          }
           : e,
       ),
     );
@@ -180,13 +184,11 @@ export default function RelationshipInfo({ data }) {
                   dataSource={[
                     {
                       key: "1",
-                      foreign: `${tables[data.startTableId]?.name}(${
-                        tables[data.startTableId].fields[data.startFieldId]
-                          ?.name
-                      })`,
-                      primary: `${tables[data.endTableId]?.name}(${
-                        tables[data.endTableId].fields[data.endFieldId]?.name
-                      })`,
+                      foreign: `${tables[data.startTableId]?.name}(${tables[data.startTableId].fields[data.startFieldId]
+                        ?.name
+                        })`,
+                      primary: `${tables[data.endTableId]?.name}(${tables[data.endTableId].fields[data.endFieldId]?.name
+                        })`,
                     },
                   ]}
                   pagination={false}

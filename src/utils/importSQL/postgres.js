@@ -1,5 +1,6 @@
 import { Cardinality, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
+import { formatSQLRelationshipName } from "../formatUtils";
 import { buildSQLFromAST } from "./shared";
 
 const affinity = {
@@ -129,8 +130,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
               );
               if (startFieldId === -1) return;
 
-              relationship.name =
-                "fk_" + startTable + "_" + startField + "_" + endTable;
+              relationship.name = formatSQLRelationshipName(startTable, startField, endTable);
               relationship.startTableId = startTableId;
               relationship.endTableId = endTableId;
               relationship.endFieldId = endFieldId;
@@ -200,8 +200,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
             );
             if (startFieldId === -1) return;
 
-            relationship.name =
-              "fk_" + startTable + "_" + startField + "_" + endTable;
+            relationship.name = formatSQLRelationshipName(startTable, startField, endTable);
             relationship.startTableId = startTableId;
             relationship.startFieldId = startFieldId;
             relationship.endTableId = endTableId;
@@ -283,7 +282,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
         if (
           expr.action === "add" &&
           expr.create_definitions.constraint_type.toLowerCase() ===
-            "foreign key"
+          "foreign key"
         ) {
           const relationship = {};
           const startTable = e.table[0].table;
@@ -328,8 +327,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
           );
           if (startFieldId === -1) return;
 
-          relationship.name =
-            "fk_" + startTable + "_" + startField + "_" + endTable;
+          relationship.name = relationship.name = formatSQLRelationshipName(startTable.name, startField, endTable);
           relationship.startTableId = startTableId;
           relationship.startFieldId = startFieldId;
           relationship.endTableId = endTableId;

@@ -1,5 +1,6 @@
 import { Cardinality, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
+import { formatSQLRelationshipName } from "../formatUtils";
 import { buildSQLFromAST } from "./shared";
 
 const affinity = {
@@ -62,8 +63,7 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
     );
     if (startFieldId === -1) return;
 
-    relationship.name =
-      "fk_" + startTable.name + "_" + startFieldName + "_" + endTableName;
+    relationship.name = formatSQLRelationshipName(startTable.name, startFieldName, endTableName);
     relationship.startTableId = startTable.id;
     relationship.endTableId = endTableId;
     relationship.endFieldId = endFieldId;

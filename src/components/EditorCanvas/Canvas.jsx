@@ -25,6 +25,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "usehooks-ts";
 import { areFieldsCompatible } from "../../utils/utils";
+import { formatRelationshipName } from "../../utils/formatUtils";
 
 export default function Canvas() {
   const { t } = useTranslation();
@@ -432,9 +433,10 @@ export default function Canvas() {
       cardinality: Cardinality.ONE_TO_ONE,
       updateConstraint: Constraint.NONE,
       deleteConstraint: Constraint.NONE,
-      name: `fk_${tables[linkingLine.startTableId].name}_${
-        tables[linkingLine.startTableId].fields[linkingLine.startFieldId].name
-      }_${tables[hoveredTable.tableId].name}`,
+      name: formatRelationshipName({
+        startTableId: linkingLine.startTableId, startFieldId: linkingLine.startFieldId,
+        endTableId: hoveredTable.tableId, endFieldId: hoveredTable.field
+      }, tables),
       id: relationships.length,
     };
     delete newRelationship.startX;
@@ -459,13 +461,13 @@ export default function Canvas() {
             x:
               prev.pan.x -
               (pointer.spaces.diagram.x - prev.pan.x) *
-                eagernessFactor *
-                Math.sign(e.deltaY),
+              eagernessFactor *
+              Math.sign(e.deltaY),
             y:
               prev.pan.y -
               (pointer.spaces.diagram.y - prev.pan.y) *
-                eagernessFactor *
-                Math.sign(e.deltaY),
+              eagernessFactor *
+              Math.sign(e.deltaY),
           },
           zoom: e.deltaY <= 0 ? prev.zoom * 1.05 : prev.zoom / 1.05,
         }));
