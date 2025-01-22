@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Collapse, Button } from "@douyinfe/semi-ui";
-import { IconPlus } from "@douyinfe/semi-icons";
-import { useSelect, useDiagram } from "../../../hooks";
+import { IconPlus, IconDisc } from "@douyinfe/semi-icons";
+import { useSelect, useDiagram, useTransform } from "../../../hooks";
 import { ObjectType } from "../../../data/constants";
 import SearchBar from "./SearchBar";
 import Empty from "../Empty";
@@ -9,6 +9,7 @@ import TableInfo from "./TableInfo";
 import { useTranslation } from "react-i18next";
 
 export default function TablesTab() {
+  const { locateTargetPosition } = useTransform();
   const { tables, addTable } = useDiagram();
   const { selectedElement, setSelectedElement } = useSelect();
   const [activeKey, setActiveKey] = useState("");
@@ -47,24 +48,33 @@ export default function TablesTab() {
           accordion
           className="overflow-auto"
         >
-          {tables.map((t) => (
-            <div id={`scroll_table_${t.id}`} key={t.id}>
+          {tables.map((table) => (
+            <div id={`scroll_table_${table.id}`} key={table.id}>
               <Collapse.Panel
                 className="relative"
                 header={
                   <>
-                    <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-                      {t.name}
+                    <div className="overflow-hidden text-ellipsis whitespace-nowrap flex items-center">
+                      <IconDisc
+                        className="me-1 hover:text-blue-500"
+                        title={t("locate")}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          locateTargetPosition(table.x, table.y);
+                        }}
+                      />
+                      {table.name}
                     </div>
                     <div
                       className="w-1 h-full absolute top-0 left-0 bottom-0"
-                      style={{ backgroundColor: t.color }}
+                      style={{ backgroundColor: table.color }}
                     />
                   </>
                 }
-                itemKey={`${t.id}`}
+                itemKey={`${table.id}`}
               >
-                {selectedActiveKey === t.id + "" && <TableInfo data={t} />}
+                {selectedActiveKey === table.id + "" && <TableInfo data={table} />}
               </Collapse.Panel>
             </div>
           ))}

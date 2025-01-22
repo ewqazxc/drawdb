@@ -85,7 +85,7 @@ export default function ControlPanel({
   const [sidesheet, setSidesheet] = useState(SIDESHEET.NONE);
   const [showEditName, setShowEditName] = useState(false);
   const [importDb, setImportDb] = useState("");
-  const getFileName = ()=>`${title}_${new Date().toISOString()}`;
+  const getFileName = () => `${title}_${new Date().toISOString()}`;
   const [exportData, setExportData] = useState({
     data: null,
     filename: getFileName(),
@@ -101,7 +101,7 @@ export default function ControlPanel({
         })
       });
     } else {
-      setExportData({filename,...arg});
+      setExportData({ filename, ...arg });
     }
   };
   const { saveState, setSaveState } = useSaveState();
@@ -266,9 +266,9 @@ export default function ControlPanel({
             indices: tables[a.tid].indices.map((index) =>
               index.id === a.iid
                 ? {
-                    ...index,
-                    ...a.undo,
-                  }
+                  ...index,
+                  ...a.undo,
+                }
                 : index,
             ),
           });
@@ -452,9 +452,9 @@ export default function ControlPanel({
             indices: tables[a.tid].indices.map((index) =>
               index.id === a.iid
                 ? {
-                    ...index,
-                    ...a.redo,
-                  }
+                  ...index,
+                  ...a.redo,
+                }
                 : index,
             ),
           });
@@ -560,11 +560,10 @@ export default function ControlPanel({
     const scale = Math.min(scaleX, scaleY);
     const translateX = canvas.left;
     const translateY = canvas.top;
-
     setTransform((prev) => ({
       ...prev,
       zoom: scale - 0.01,
-      pan: { x: translateX, y: translateY },
+      pan: { x: translateX, y: translateY,},
     }));
   };
   const edit = () => {
@@ -667,11 +666,11 @@ export default function ControlPanel({
         break;
     }
   };
-  const isCopyText = ()=>{
+  const isCopyText = () => {
     return !!window.getSelection()?.toString();
   };
   const copy = () => {
-    if(isCopyText()) return;
+    if (isCopyText()) return;
     switch (selectedElement.element) {
       case ObjectType.TABLE:
         navigator.clipboard
@@ -726,7 +725,7 @@ export default function ControlPanel({
     });
   };
   const cut = () => {
-    if(isCopyText()) return;
+    if (isCopyText()) return;
     copy();
     del();
   };
@@ -1103,7 +1102,7 @@ export default function ControlPanel({
             },
           },
         ],
-        function: () => {},
+        function: () => { },
       },
       exit: {
         function: () => {
@@ -1295,7 +1294,7 @@ export default function ControlPanel({
             },
           },
         ],
-        function: () => {},
+        function: () => { },
       },
       zoom_in: {
         function: zoomIn,
@@ -1383,9 +1382,9 @@ export default function ControlPanel({
   useHotkeys("ctrl+o, meta+o", open, { preventDefault: true });
   useHotkeys("ctrl+e, meta+e", edit, { preventDefault: true });
   useHotkeys("ctrl+d, meta+d", duplicate, { preventDefault: true });
-  useHotkeys("ctrl+c, meta+c", copy, { preventDefault: ()=>!isCopyText()});
+  useHotkeys("ctrl+c, meta+c", copy, { preventDefault: () => !isCopyText() });
   useHotkeys("ctrl+v, meta+v", paste, { preventDefault: true });
-  useHotkeys("ctrl+x, meta+x", cut, { preventDefault: ()=>!isCopyText()});
+  useHotkeys("ctrl+x, meta+x", cut, { preventDefault: () => !isCopyText() });
   useHotkeys("delete", del, { preventDefault: true });
   useHotkeys("ctrl+shift+g, meta+shift+g", viewGrid, { preventDefault: true });
   useHotkeys("ctrl+up, meta+up", zoomIn, { preventDefault: true });

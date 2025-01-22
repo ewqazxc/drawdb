@@ -38,8 +38,20 @@ export default function TransformContextProvider({ children }) {
     [setTransformInternal],
   );
 
+  const locateTargetPosition = useCallback((x, y) => {
+    const canvas = document.getElementById("canvas").getBoundingClientRect();
+    const viewBoxSize = {
+      x: canvas.width / transform.zoom,
+      y: canvas.height / transform.zoom,
+    };
+    setTransform((prev) => ({
+      ...prev,
+      pan: { x: viewBoxSize.x / 2 + x, y: viewBoxSize.y / 2 + y, },
+    }));
+  }, [setTransform, transform.zoom]);
+
   return (
-    <TransformContext.Provider value={{ transform, setTransform }}>
+    <TransformContext.Provider value={{ transform, setTransform, locateTargetPosition }}>
       {children}
     </TransformContext.Provider>
   );

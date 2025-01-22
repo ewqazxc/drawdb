@@ -105,11 +105,16 @@ export default function SidePanel({ width, resize, setResize }) {
             contentStyle={{ height: "100%", overflow: "hidden" }}
           >
             {tabList.length &&
-              tabList.map((tab) => (
-                <TabPane className="h-full overflow-hidden child-h-full" tab={tab.tab} itemKey={tab.itemKey} key={tab.itemKey}>
-                  <div className="p-2 h-full overflow-hidden flex flex-col">{tab.component}</div>
-                </TabPane>
-              ))}
+              tabList.map((tab) => {
+                const TabComponent = () => tab.component;
+                return (
+                  <TabPane className="h-full overflow-hidden child-h-full" tab={tab.tab} itemKey={tab.itemKey} key={tab.itemKey}>
+                    <div className="p-2 h-full overflow-hidden flex flex-col">
+                      <TabComponent />
+                    </div>
+                  </TabPane>
+                )
+              })}
           </Tabs>
         </div>
         {layout.issues && (

@@ -1,5 +1,5 @@
 import { useTransform } from "../hooks";
-import { createContext, useCallback, useMemo, useRef, useState } from "react";
+import { createContext, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useEventListener, useResizeObserver } from "usehooks-ts";
 
 export const CanvasContext = createContext({
@@ -30,13 +30,14 @@ export const CanvasContext = createContext({
       },
     },
     style: "default",
-    setStyle() {},
+    setStyle() { },
   },
+  locateTargetPosition: () => { }
 });
 
 export function CanvasContextProvider({ children, ...attrs }) {
   const canvasWrapRef = useRef(null);
-  const { transform } = useTransform();
+  const { transform, setTransform } = useTransform();
   const canvasSize = useResizeObserver({
     ref: canvasWrapRef,
     box: "content-box",
@@ -55,14 +56,19 @@ export function CanvasContextProvider({ children, ...attrs }) {
     }),
     [screenSize.x, screenSize.y, transform.zoom],
   );
+  useEffect(() => {
+    console.log('useEffect screenSize::', screenSize);
+    setTransform(pre => ({ ...pre, screenSize }));
+  }, [screenSize, setTransform]);
   const viewBox = useMemo(
-    () =>
-      new DOMRect(
+    () => {
+      return new DOMRect(
         transform.pan.x - viewBoxSize.x / 2,
         transform.pan.y - viewBoxSize.y / 2,
         viewBoxSize.x,
         viewBoxSize.y,
-      ),
+      )
+    },
     [transform.pan.x, transform.pan.y, viewBoxSize.x, viewBoxSize.y],
   );
 
@@ -156,7 +162,6 @@ export function CanvasContextProvider({ children, ...attrs }) {
       setStyle: setPointerStyle,
     },
   };
-
   return (
     <CanvasContext.Provider value={contextValue}>
       <div {...attrs} ref={canvasWrapRef}>

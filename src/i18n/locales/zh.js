@@ -220,6 +220,7 @@ const zh = {
       "* 共享此链接不会创建实时协作会话。",
     show_relationship_labels: "显示关系标签",
     show_debug_coordinates: "显示调试坐标",
+    locate: "定位到视图",
   },
 };
 
