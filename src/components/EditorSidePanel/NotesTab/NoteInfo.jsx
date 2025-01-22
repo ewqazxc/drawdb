@@ -4,6 +4,7 @@ import { IconDeleteStroked, IconCheckboxTick } from "@douyinfe/semi-icons";
 import { noteThemes, Action, ObjectType } from "../../../data/constants";
 import { useNotes, useUndoRedo } from "../../../hooks";
 import { useTranslation } from "react-i18next";
+import LocateTargetPosition from "../../Tools/LocateTargetPosition";
 
 export default function NoteInfo({ data, nid }) {
   const { updateNote, deleteNote } = useNotes();
@@ -14,7 +15,8 @@ export default function NoteInfo({ data, nid }) {
   return (
     <Collapse.Panel
       header={
-        <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+        <div className="overflow-hidden text-ellipsis whitespace-nowrap flex items-center">
+          <LocateTargetPosition position={{ x: data.x, y: data.y }} />
           {data.title}
         </div>
       }

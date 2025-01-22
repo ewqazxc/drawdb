@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Collapse, Button } from "@douyinfe/semi-ui";
-import { IconPlus, IconDisc } from "@douyinfe/semi-icons";
-import { useSelect, useDiagram, useTransform } from "../../../hooks";
+import { IconPlus } from "@douyinfe/semi-icons";
+import LocateTargetPosition from "../../Tools/LocateTargetPosition";
+import { useSelect, useDiagram } from "../../../hooks";
 import { ObjectType } from "../../../data/constants";
 import SearchBar from "./SearchBar";
 import Empty from "../Empty";
@@ -9,7 +10,6 @@ import TableInfo from "./TableInfo";
 import { useTranslation } from "react-i18next";
 
 export default function TablesTab() {
-  const { locateTargetPosition } = useTransform();
   const { tables, addTable } = useDiagram();
   const { selectedElement, setSelectedElement } = useSelect();
   const [activeKey, setActiveKey] = useState("");
@@ -55,15 +55,7 @@ export default function TablesTab() {
                 header={
                   <>
                     <div className="overflow-hidden text-ellipsis whitespace-nowrap flex items-center">
-                      <IconDisc
-                        className="me-1 hover:text-blue-500"
-                        title={t("locate")}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
-                          locateTargetPosition(table.x, table.y);
-                        }}
-                      />
+                      <LocateTargetPosition position={{ x: table.x, y: table.y }} />
                       {table.name}
                     </div>
                     <div

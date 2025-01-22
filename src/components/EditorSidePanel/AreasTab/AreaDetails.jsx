@@ -10,6 +10,7 @@ import {
 } from "../../../data/constants";
 import ColorPalette from "../../ColorPicker";
 import { useTranslation } from "react-i18next";
+import LocateTargetPosition from "../../Tools/LocateTargetPosition";
 
 export default function AreaInfo({ data, i }) {
   const { t } = useTranslation();
@@ -27,7 +28,8 @@ export default function AreaInfo({ data, i }) {
       id={`scroll_area_${data.id}`}
       className="my-3"
     >
-      <Col span={18}>
+      <Col span={18} className="flex items-center">
+        <LocateTargetPosition position={{ x: data.x, y: data.y }} />
         <Input
           value={data.name}
           placeholder={t("name")}

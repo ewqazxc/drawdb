@@ -1,13 +1,14 @@
-import { Collapse } from "@douyinfe/semi-ui";
-import { useSelect, useDiagram } from "../../../hooks";
 import Empty from "../Empty";
 import SearchBar from "./SearchBar";
 import RelationshipInfo from "./RelationshipInfo";
-import { ObjectType } from "../../../data/constants";
+import LocateTargetPosition from "../../Tools/LocateTargetPosition";
+import { Collapse } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
+import { useSelect, useDiagram } from "../../../hooks";
+import { ObjectType } from "../../../data/constants";
 
 export default function RelationshipsTab() {
-  const { relationships } = useDiagram();
+  const { tables, relationships } = useDiagram();
   const { selectedElement, setSelectedElement } = useSelect();
   const { t } = useTranslation();
 
@@ -23,7 +24,7 @@ export default function RelationshipsTab() {
         <Collapse
           activeKey={
             selectedElement.open &&
-            selectedElement.element === ObjectType.RELATIONSHIP
+              selectedElement.element === ObjectType.RELATIONSHIP
               ? `${selectedElement.id}`
               : ""
           }
@@ -44,7 +45,17 @@ export default function RelationshipsTab() {
             <div id={`scroll_ref_${r.id}`} key={"relationship_" + r.id}>
               <Collapse.Panel
                 header={
-                  <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+                  <div className="overflow-hidden text-ellipsis whitespace-nowrap flex items-center">
+                    <LocateTargetPosition
+                      position={() => {
+                        const startTable = tables[r.startTableId];
+                        const endTable = tables[r.endTableId];
+                        return {
+                          x: Math.min(startTable.x, endTable.x),
+                          y: Math.min(startTable.y, endTable.y)
+                        }
+                      }}
+                    />
                     {r.name}
                   </div>
                 }
