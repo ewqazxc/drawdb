@@ -27,7 +27,7 @@ export default function Code({ value, language }) {
         }, 2000);
       })
       .catch((e) => {
-        console.log(e);
+        console.error(e);
       });
   };
 

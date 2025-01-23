@@ -71,6 +71,7 @@ export default function Modal({
   const [selectedTemplateId, setSelectedTemplateId] = useState(-1);
   const [selectedDiagramId, setSelectedDiagramId] = useState(0);
   const [saveAsTitle, setSaveAsTitle] = useState(title);
+  // const [confirmLoading, setConfirmLoading] = useState(true);
 
   const overwriteDiagram = () => {
     setTables(importData.tables);
@@ -124,7 +125,7 @@ export default function Modal({
         }
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
         Toast.error(t("didnt_find_diagram"));
       });
   };
@@ -286,7 +287,7 @@ export default function Modal({
         );
       case MODAL.CODE:
       case MODAL.IMG:
-        if (exportData.data !== "" || exportData.data) {
+        if (typeof exportData.data === 'string' && exportData.data) {
           return (
             <>
               {modal === MODAL.IMG ? (
@@ -309,7 +310,7 @@ export default function Modal({
         } else {
           return (
             <div className="text-center my-3 text-sky-600">
-              <Spin tip={t("loading")} size="large" />
+              <Spin tip={t("loading")} size="large" style={{ width: "100%" }} childStyle={{ display: 'flex' }} />
             </div>
           );
         }

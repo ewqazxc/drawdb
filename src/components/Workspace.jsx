@@ -198,7 +198,7 @@ export default function WorkSpace() {
           }
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
         });
     };
     const loadDiagram = async (id) => {
@@ -235,7 +235,7 @@ export default function WorkSpace() {
           }
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
         });
     };
 
@@ -273,7 +273,7 @@ export default function WorkSpace() {
           }
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
           if (initDatabase === "") setShowSelectDbModal(true);
         });
     };
@@ -305,7 +305,7 @@ export default function WorkSpace() {
           setEnums(d.enums ?? []);
         }
       } catch (e) {
-        console.log(e);
+        console.error(e);
         setSaveState(State.FAILED_TO_LOAD);
       }
     };

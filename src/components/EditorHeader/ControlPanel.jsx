@@ -563,8 +563,29 @@ export default function ControlPanel({
     setTransform((prev) => ({
       ...prev,
       zoom: scale - 0.01,
-      pan: { x: translateX, y: translateY,},
+      pan: { x: translateX, y: translateY, },
     }));
+  };
+  const delaySetModal = (type, func) => {
+    changeExportData((prev) => ({
+      ...prev,
+      data: "",
+    }));
+    setModal(type);
+    func && setTimeout(() => {
+      func();
+    }, 200);
+  };
+  const toastLoading = (func) => {
+    const loadingId = Toast.info({
+      content: t("loading"),
+      duration: 0,
+      top: 300,
+      showClose: false,
+    });
+    setModal(MODAL.NONE);
+    setTimeout(() => { func(loadingId) }, 200);
+    return loadingId;
   };
   const edit = () => {
     if (selectedElement.element === ObjectType.TABLE) {
@@ -814,32 +835,37 @@ export default function ControlPanel({
           children: [
             {
               MySQL: () => {
-                setModal(MODAL.IMPORT_SRC);
-                setImportDb(DB.MYSQL);
+                delaySetModal(MODAL.IMPORT_SRC, () => {
+                  setImportDb(DB.MYSQL);
+                });
               },
             },
             {
               PostgreSQL: () => {
-                setModal(MODAL.IMPORT_SRC);
-                setImportDb(DB.POSTGRES);
+                delaySetModal(MODAL.IMPORT_SRC, () => {
+                  setImportDb(DB.POSTGRES);
+                });
               },
             },
             {
               SQLite: () => {
-                setModal(MODAL.IMPORT_SRC);
-                setImportDb(DB.SQLITE);
+                delaySetModal(MODAL.IMPORT_SRC, () => {
+                  setImportDb(DB.SQLITE);
+                });
               },
             },
             {
               MariaDB: () => {
-                setModal(MODAL.IMPORT_SRC);
-                setImportDb(DB.MARIADB);
+                delaySetModal(MODAL.IMPORT_SRC, () => {
+                  setImportDb(DB.MARIADB);
+                });
               },
             },
             {
               MSSQL: () => {
-                setModal(MODAL.IMPORT_SRC);
-                setImportDb(DB.MSSQL);
+                delaySetModal(MODAL.IMPORT_SRC, () => {
+                  setImportDb(DB.MSSQL);
+                });
               },
             },
           ],
@@ -855,250 +881,270 @@ export default function ControlPanel({
           children: [
             {
               MySQL: () => {
-                setModal(MODAL.CODE);
-                const src = jsonToMySQL({
-                  tables: tables,
-                  references: relationships,
-                  types: types,
-                  database: database,
+
+                delaySetModal(MODAL.CODE, () => {
+                  const src = jsonToMySQL({
+                    tables: tables,
+                    references: relationships,
+                    types: types,
+                    database: database,
+                  });
+                  changeExportData((prev) => ({
+                    ...prev,
+                    data: src,
+                    extension: "sql",
+                  }));
                 });
-                changeExportData((prev) => ({
-                  ...prev,
-                  data: src,
-                  extension: "sql",
-                }));
               },
             },
             {
               PostgreSQL: () => {
-                setModal(MODAL.CODE);
-                const src = jsonToPostgreSQL({
-                  tables: tables,
-                  references: relationships,
-                  types: types,
-                  database: database,
+                delaySetModal(MODAL.CODE, () => {
+                  const src = jsonToPostgreSQL({
+                    tables: tables,
+                    references: relationships,
+                    types: types,
+                    database: database,
+                  });
+                  changeExportData((prev) => ({
+                    ...prev,
+                    data: src,
+                    extension: "sql",
+                  }));
                 });
-                changeExportData((prev) => ({
-                  ...prev,
-                  data: src,
-                  extension: "sql",
-                }));
               },
             },
             {
               SQLite: () => {
-                setModal(MODAL.CODE);
-                const src = jsonToSQLite({
-                  tables: tables,
-                  references: relationships,
-                  types: types,
-                  database: database,
+                delaySetModal(MODAL.CODE, () => {
+                  const src = jsonToSQLite({
+                    tables: tables,
+                    references: relationships,
+                    types: types,
+                    database: database,
+                  });
+                  changeExportData((prev) => ({
+                    ...prev,
+                    data: src,
+                    extension: "sql",
+                  }));
                 });
-                changeExportData((prev) => ({
-                  ...prev,
-                  data: src,
-                  extension: "sql",
-                }));
               },
             },
             {
               MariaDB: () => {
-                setModal(MODAL.CODE);
-                const src = jsonToMariaDB({
-                  tables: tables,
-                  references: relationships,
-                  types: types,
-                  database: database,
+                delaySetModal(MODAL.CODE, () => {
+                  const src = jsonToMariaDB({
+                    tables: tables,
+                    references: relationships,
+                    types: types,
+                    database: database,
+                  });
+                  changeExportData((prev) => ({
+                    ...prev,
+                    data: src,
+                    extension: "sql",
+                  }));
                 });
-                changeExportData((prev) => ({
-                  ...prev,
-                  data: src,
-                  extension: "sql",
-                }));
               },
             },
             {
               MSSQL: () => {
-                setModal(MODAL.CODE);
-                const src = jsonToSQLServer({
-                  tables: tables,
-                  references: relationships,
-                  types: types,
-                  database: database,
+                delaySetModal(MODAL.CODE, () => {
+                  const src = jsonToSQLServer({
+                    tables: tables,
+                    references: relationships,
+                    types: types,
+                    database: database,
+                  });
+                  changeExportData((prev) => ({
+                    ...prev,
+                    data: src,
+                    extension: "sql",
+                  }));
                 });
-                changeExportData((prev) => ({
-                  ...prev,
-                  data: src,
-                  extension: "sql",
-                }));
               },
             },
           ],
         }),
         function: () => {
           if (database === DB.GENERIC) return;
-          setModal(MODAL.CODE);
-          const src = exportSQL({
-            tables: tables,
-            references: relationships,
-            types: types,
-            database: database,
-            enums: enums,
+          delaySetModal(MODAL.CODE, () => {
+            const src = exportSQL({
+              tables: tables,
+              references: relationships,
+              types: types,
+              database: database,
+              enums: enums,
+            });
+            changeExportData((prev) => ({
+              ...prev,
+              data: src,
+              extension: "sql",
+            }));
           });
-          changeExportData((prev) => ({
-            ...prev,
-            data: src,
-            extension: "sql",
-          }));
         },
       },
       export_as: {
         children: [
           {
             PNG: () => {
-              toPng(document.getElementById("canvas")).then(function (dataUrl) {
-                changeExportData((prev) => ({
-                  ...prev,
-                  data: dataUrl,
-                  extension: "png",
-                }));
-              });
-              setModal(MODAL.IMG);
-            },
-          },
-          {
-            JPEG: () => {
-              toJpeg(document.getElementById("canvas"), { quality: 0.95 }).then(
-                function (dataUrl) {
+              delaySetModal(MODAL.IMG, () => {
+                toPng(document.getElementById("canvas")).then(dataUrl => {
                   changeExportData((prev) => ({
                     ...prev,
                     data: dataUrl,
-                    extension: "jpeg",
-                  }));
-                },
-              );
-              setModal(MODAL.IMG);
+                    extension: "png",
+                  }))
+                })
+              });
+            }
+          },
+          {
+            JPEG: () => {
+              delaySetModal(MODAL.IMG, () => {
+                toJpeg(document.getElementById("canvas"), { quality: 0.95 }).then(
+                  function (dataUrl) {
+                    changeExportData((prev) => ({
+                      ...prev,
+                      data: dataUrl,
+                      extension: "jpeg",
+                    }));
+                  },
+                );
+              });
             },
           },
           {
             JSON: () => {
-              setModal(MODAL.CODE);
-              const result = JSON.stringify(
-                {
-                  tables: tables,
-                  relationships: relationships,
-                  notes: notes,
-                  subjectAreas: areas,
-                  database: database,
-                  ...(databases[database].hasTypes && { types: types }),
-                  ...(databases[database].hasEnums && { enums: enums }),
-                  title: title,
-                },
-                null,
-                2,
-              );
-              changeExportData((prev) => ({
-                ...prev,
-                data: result,
-                extension: "json",
-              }));
+              delaySetModal(MODAL.CODE, () => {
+                const result = JSON.stringify(
+                  {
+                    tables: tables,
+                    relationships: relationships,
+                    notes: notes,
+                    subjectAreas: areas,
+                    database: database,
+                    ...(databases[database].hasTypes && { types: types }),
+                    ...(databases[database].hasEnums && { enums: enums }),
+                    title: title,
+                  },
+                  null,
+                  2,
+                );
+                changeExportData((prev) => ({
+                  ...prev,
+                  data: result,
+                  extension: "json",
+                }));
+              });
             },
           },
           {
             SVG: () => {
-              const filter = (node) => node.tagName !== "i";
-              toSvg(document.getElementById("canvas"), { filter: filter }).then(
-                function (dataUrl) {
-                  changeExportData((prev) => ({
-                    ...prev,
-                    data: dataUrl,
-                    extension: "svg",
-                  }));
-                },
-              );
-              setModal(MODAL.IMG);
+              delaySetModal(MODAL.IMG, () => {
+                const filter = (node) => node.tagName !== "i";
+                toSvg(document.getElementById("canvas"), { filter: filter }).then(
+                  function (dataUrl) {
+                    changeExportData((prev) => ({
+                      ...prev,
+                      data: dataUrl,
+                      extension: "svg",
+                    }));
+                  },
+                );
+              });
             },
           },
           {
             PDF: () => {
-              const canvas = document.getElementById("canvas");
-              toJpeg(canvas).then(function (dataUrl) {
-                const doc = new jsPDF("l", "px", [
-                  canvas.offsetWidth,
-                  canvas.offsetHeight,
-                ]);
-                doc.addImage(
-                  dataUrl,
-                  "jpeg",
-                  0,
-                  0,
-                  canvas.offsetWidth,
-                  canvas.offsetHeight,
-                );
-                doc.save(`${getFileName()}.pdf`);
+              toastLoading((loadingId) => {
+                const canvas = document.getElementById("canvas");
+                toJpeg(canvas).then(function (dataUrl) {
+                  const doc = new jsPDF("l", "px", [
+                    canvas.offsetWidth,
+                    canvas.offsetHeight,
+                  ]);
+                  doc.addImage(
+                    dataUrl,
+                    "jpeg",
+                    0,
+                    0,
+                    canvas.offsetWidth,
+                    canvas.offsetHeight,
+                  );
+                  doc.save(`${getFileName()}.pdf`);
+                }).finally(() => {
+                  Toast.close(loadingId);
+                });
               });
             },
           },
           {
             DRAWDB: () => {
-              const result = JSON.stringify(
-                {
-                  author: "Unnamed",
-                  title: title,
-                  date: new Date().toISOString(),
+              toastLoading((loadingId) => {
+                const result = JSON.stringify(
+                  {
+                    author: "Unnamed",
+                    title: title,
+                    date: new Date().toISOString(),
+                    tables: tables,
+                    relationships: relationships,
+                    notes: notes,
+                    subjectAreas: areas,
+                    database: database,
+                    ...(databases[database].hasTypes && { types: types }),
+                    ...(databases[database].hasEnums && { enums: enums }),
+                  },
+                  null,
+                  2,
+                );
+                const blob = new Blob([result], {
+                  type: "text/plain;charset=utf-8",
+                });
+                saveAs(blob, `${getFileName()}.ddb`);
+                Toast.close(loadingId);
+              });
+            },
+          },
+          {
+            MERMAID: () => {
+              delaySetModal(MODAL.CODE, () => {
+                const result = jsonToMermaid({
                   tables: tables,
                   relationships: relationships,
                   notes: notes,
                   subjectAreas: areas,
                   database: database,
-                  ...(databases[database].hasTypes && { types: types }),
-                  ...(databases[database].hasEnums && { enums: enums }),
-                },
-                null,
-                2,
-              );
-              const blob = new Blob([result], {
-                type: "text/plain;charset=utf-8",
+                  title: title,
+                });
+                changeExportData((prev) => ({
+                  ...prev,
+                  data: result,
+                  extension: "md",
+                }));
               });
-              saveAs(blob, `${getFileName()}.ddb`);
-            },
-          },
-          {
-            MERMAID: () => {
-              setModal(MODAL.CODE);
-              const result = jsonToMermaid({
-                tables: tables,
-                relationships: relationships,
-                notes: notes,
-                subjectAreas: areas,
-                database: database,
-                title: title,
-              });
-              changeExportData((prev) => ({
-                ...prev,
-                data: result,
-                extension: "md",
-              }));
             },
           },
           {
             readme: () => {
-              setModal(MODAL.CODE);
-              const result = jsonToDocumentation({
-                tables: tables,
-                relationships: relationships,
-                notes: notes,
-                subjectAreas: areas,
-                database: database,
-                title: title,
-                ...(databases[database].hasTypes && { types: types }),
-                ...(databases[database].hasEnums && { enums: enums }),
+              delaySetModal(MODAL.CODE, () => {
+                const result = jsonToDocumentation({
+                  tables: tables,
+                  relationships: relationships,
+                  notes: notes,
+                  subjectAreas: areas,
+                  database: database,
+                  title: title,
+                  ...(databases[database].hasTypes && { types: types }),
+                  ...(databases[database].hasEnums && { enums: enums }),
+                });
+                changeExportData((prev) => ({
+                  ...prev,
+                  data: result,
+                  extension: "md",
+                }));
               });
-              changeExportData((prev) => ({
-                ...prev,
-                data: result,
-                extension: "md",
-              }));
             },
           },
         ],
@@ -1711,7 +1757,7 @@ export default function ControlPanel({
                                       (e, i) => (
                                         <Dropdown.Item
                                           key={i}
-                                          onClick={Object.values(e)[0]}
+                                          onClick={() => { setTimeout(() => { Object.values(e)[0]?.() }, 200) }}
                                         >
                                           {t(Object.keys(e)[0])}
                                         </Dropdown.Item>
