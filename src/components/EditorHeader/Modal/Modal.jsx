@@ -369,7 +369,7 @@ export default function Modal({
       cancelText={t("cancel")}
       width={getModalWidth(modal)}
       bodyStyle={{
-        maxHeight: window.innerHeight - 280,
+        maxHeight: window.innerHeight - 280 < 640 ? 640 : window.innerHeight - 280,
         overflow:
           modal === MODAL.CODE || modal === MODAL.IMG ? "hidden" : "auto",
         direction: "ltr",
