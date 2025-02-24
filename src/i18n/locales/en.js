@@ -245,6 +245,7 @@ const en = {
       "* Sharing this link will not create a live real-time collaboration session.",
     show_relationship_labels: "Show relationship labels",
     locate: "Locate",
+    docs: "Docs",
   },
 };
 

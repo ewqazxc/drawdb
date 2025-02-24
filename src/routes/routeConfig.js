@@ -18,11 +18,6 @@ export const routeConfig = [
     useThemedPage: true,
   },
   {
-    path: "/shortcuts",
-    component: lazy(() => import("../pages/Shortcuts")),
-    useThemedPage: true,
-  },
-  {
     path: "/bug-report",
     component: lazy(() => import("../pages/BugReport")),
     useThemedPage: true,
