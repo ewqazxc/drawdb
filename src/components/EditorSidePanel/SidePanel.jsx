@@ -71,7 +71,6 @@ export default function SidePanel({ width, resize, setResize }) {
         component: <EnumsTab />,
       });
     }
-
     return isRtl(i18n.language) ? tabs.reverse() : tabs;
   }, [
     t,
@@ -83,14 +82,26 @@ export default function SidePanel({ width, resize, setResize }) {
     enumsCount,
     notesCount,
   ]);
-
+  const renderDom = useMemo(() => {
+    return tabList.length &&
+      tabList.map((tab) => {
+        const TabComponent = () => tab.component;
+        return (
+          <TabPane className="h-full overflow-hidden child-h-full" tab={tab.tab} itemKey={tab.itemKey} key={tab.itemKey}>
+            <div className="p-2 pr-0 h-full overflow-hidden flex flex-col">
+              <TabComponent />
+            </div>
+          </TabPane>
+        )
+      })
+  }, [tabList]);
   return (
     <div className="flex h-full">
       <div
         className="flex flex-col h-full relative border-r border-color"
         style={{ width: `${width}px` }}
       >
-        <div className="h-full flex-1 overflow-y-auto">
+        <div className="h-full flex-1 overflow-y-hidden">
           <Tabs
             type="card"
             activeKey={selectedElement.currentTab}
@@ -104,17 +115,7 @@ export default function SidePanel({ width, resize, setResize }) {
             className="flex flex-col h-full overflow-hidden"
             contentStyle={{ height: "100%", overflow: "hidden" }}
           >
-            {tabList.length &&
-              tabList.map((tab) => {
-                const TabComponent = () => tab.component;
-                return (
-                  <TabPane className="h-full overflow-hidden child-h-full" tab={tab.tab} itemKey={tab.itemKey} key={tab.itemKey}>
-                    <div className="p-2 h-full overflow-hidden flex flex-col">
-                      <TabComponent />
-                    </div>
-                  </TabPane>
-                )
-              })}
+            {renderDom}
           </Tabs>
         </div>
         {layout.issues && (
