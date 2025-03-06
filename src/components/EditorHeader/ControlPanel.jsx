@@ -40,6 +40,7 @@ import {
   MODAL,
   SIDESHEET,
   DB,
+  IMPORT_FROM,
 } from "../../data/constants";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -74,6 +75,7 @@ import { isRtl } from "../../i18n/utils/rtl";
 import { jsonToDocumentation } from "../../utils/exportAs/documentation";
 import { IdContext } from "../Workspace";
 import { socials } from "../../data/socials";
+import { toDBML } from "../../utils/exportAs/dbml";
 
 export default function ControlPanel({
   diagramId,
@@ -105,6 +107,7 @@ export default function ControlPanel({
       setExportData({ filename, ...arg });
     }
   };
+  const [importFrom, setImportFrom] = useState(IMPORT_FROM.JSON);
   const { saveState, setSaveState } = useSaveState();
   const { layout, setLayout } = useLayout();
   const { settings, setSettings } = useSettings();
@@ -827,9 +830,18 @@ export default function ControlPanel({
             .catch(() => Toast.error(t("oops_smth_went_wrong")));
         },
       },
-      import_diagram: {
-        function: fileImport,
-        shortcut: "Ctrl+I",
+      import_from: {
+        children: [
+          {
+            JSON: fileImport,
+          },
+          {
+            DBML: () => {
+              setModal(MODAL.IMPORT);
+              setImportFrom(IMPORT_FROM.DBML);
+            },
+          },
+        ],
       },
       import_from_source: {
         ...(database === DB.GENERIC && {
@@ -1017,6 +1029,21 @@ export default function ControlPanel({
             },
           },
           {
+            SVG: () => {
+              const filter = (node) => node.tagName !== "i";
+              toSvg(document.getElementById("canvas"), { filter: filter }).then(
+                function (dataUrl) {
+                  setExportData((prev) => ({
+                    ...prev,
+                    data: dataUrl,
+                    extension: "svg",
+                  }));
+                },
+              );
+              setModal(MODAL.IMG);
+            },
+          },
+          {
             JSON: () => {
               delaySetModal(MODAL.CODE, () => {
                 const result = JSON.stringify(
@@ -1055,6 +1082,21 @@ export default function ControlPanel({
                   },
                 );
               });
+            },
+          },
+          {
+            DBML: () => {
+              setModal(MODAL.CODE);
+              const result = toDBML({
+                tables,
+                relationships,
+                enums,
+              });
+              setExportData((prev) => ({
+                ...prev,
+                data: result,
+                extension: "dbml",
+              }));
             },
           },
           {
@@ -1487,6 +1529,7 @@ export default function ControlPanel({
         setTitle={setTitle}
         setDiagramId={setDiagramId}
         setModal={setModal}
+        importFrom={importFrom}
         importDb={importDb}
       />
       <Sidesheet
