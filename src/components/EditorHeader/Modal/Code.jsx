@@ -32,10 +32,10 @@ export default function Code({ value, language }) {
   };
 
   return (
-    <div className="relative">
+    <div className="relative flex-1 overflow-auto">
       <CodeMirror
         value={value}
-        height="360px"
+        // height="360px"
         extensions={languageExtension[language]}
         editable={false}
         theme={settings.mode === "dark" ? vscodeDark : githubLight}
