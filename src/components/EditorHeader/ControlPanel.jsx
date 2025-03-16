@@ -1315,6 +1315,15 @@ export default function ControlPanel({
         function: resetView,
         shortcut: "Ctrl+R",
       },
+      show_datatype: {
+        state: settings.showDataTypes ? (
+          <i className="bi bi-toggle-on" />
+        ) : (
+          <i className="bi bi-toggle-off" />
+        ),
+        function: () =>
+          setSettings((prev) => ({ ...prev, showDataTypes: !prev.showDataTypes })),
+      },
       show_grid: {
         state: settings.showGrid ? (
           <i className="bi bi-toggle-on" />
