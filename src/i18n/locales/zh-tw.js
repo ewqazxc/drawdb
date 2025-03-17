@@ -47,6 +47,7 @@ const zh_tw = {
     field_details: "欄位詳細資料",
     reset_view: "重設檢視",
     show_grid: "顯示格線",
+    show_datatype: "顯示數據類型",
     show_cardinality: "顯示基數",
     theme: "佈景主題",
     light: "淺色",
