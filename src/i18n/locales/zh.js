@@ -222,6 +222,8 @@ const zh = {
     show_relationship_labels: "显示关系标签",
     show_debug_coordinates: "显示调试坐标",
     locate: "定位到视图",
+    docs: "文档",
+    supported_types: "支持的文件类型:",
   },
 };
 
