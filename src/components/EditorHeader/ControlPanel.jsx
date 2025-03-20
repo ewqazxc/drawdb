@@ -1322,7 +1322,10 @@ export default function ControlPanel({
           <i className="bi bi-toggle-off" />
         ),
         function: () =>
-          setSettings((prev) => ({ ...prev, showDataTypes: !prev.showDataTypes })),
+          setSettings((prev) => ({
+            ...prev,
+            showDataTypes: !prev.showDataTypes,
+          })),
       },
       show_grid: {
         state: settings.showGrid ? (
@@ -1518,7 +1521,7 @@ export default function ControlPanel({
             {window.name.split(" ")[0] !== "t" && (
               <Button
                 type="primary"
-                className="text-base me-2 pe-6 ps-5 py-[18px] rounded-md"
+                className="!text-base me-2 !pe-6 !ps-5 !py-[18px] !rounded-md"
                 size="default"
                 icon={<IconShareStroked />}
                 onClick={() => setModal(MODAL.SHARE)}
@@ -1601,7 +1604,7 @@ export default function ControlPanel({
             }
             trigger="click"
           >
-            <div className="py-1 px-2 hover-2 rounded flex items-center justify-center">
+            <div className="py-1 px-2 hover-2 rounded-sm flex items-center justify-center">
               <div className="w-[40px]">
                 {Math.floor(transform.zoom * 100)}%
               </div>
@@ -1612,7 +1615,7 @@ export default function ControlPanel({
           </Dropdown>
           <Tooltip content={t("zoom_in")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded text-lg"
+              className="py-1 px-2 hover-2 rounded-sm text-lg"
               onClick={() =>
                 setTransform((prev) => ({ ...prev, zoom: prev.zoom * 1.2 }))
               }
@@ -1622,7 +1625,7 @@ export default function ControlPanel({
           </Tooltip>
           <Tooltip content={t("zoom_out")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded text-lg"
+              className="py-1 px-2 hover-2 rounded-sm text-lg"
               onClick={() =>
                 setTransform((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }))
               }
@@ -1633,7 +1636,7 @@ export default function ControlPanel({
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("undo")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded flex items-center"
+              className="py-1 px-2 hover-2 rounded-sm flex items-center"
               onClick={undo}
             >
               <IconUndo
@@ -1644,7 +1647,7 @@ export default function ControlPanel({
           </Tooltip>
           <Tooltip content={t("redo")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded flex items-center"
+              className="py-1 px-2 hover-2 rounded-sm flex items-center"
               onClick={redo}
             >
               <IconRedo
@@ -1656,7 +1659,7 @@ export default function ControlPanel({
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("add_table")} position="bottom">
             <button
-              className="flex items-center py-1 px-2 hover-2 rounded"
+              className="flex items-center py-1 px-2 hover-2 rounded-sm"
               onClick={() => addTable()}
             >
               <IconAddTable />
@@ -1664,7 +1667,7 @@ export default function ControlPanel({
           </Tooltip>
           <Tooltip content={t("add_area")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded flex items-center"
+              className="py-1 px-2 hover-2 rounded-sm flex items-center"
               onClick={() => addArea()}
             >
               <IconAddArea />
@@ -1672,7 +1675,7 @@ export default function ControlPanel({
           </Tooltip>
           <Tooltip content={t("add_note")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded flex items-center"
+              className="py-1 px-2 hover-2 rounded-sm flex items-center"
               onClick={() => addNote()}
             >
               <IconAddNote />
@@ -1681,7 +1684,7 @@ export default function ControlPanel({
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("save")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded flex items-center"
+              className="py-1 px-2 hover-2 rounded-sm flex items-center"
               onClick={save}
             >
               <IconSaveStroked size="extra-large" />
@@ -1689,7 +1692,7 @@ export default function ControlPanel({
           </Tooltip>
           <Tooltip content={t("to_do")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded text-xl -mt-0.5"
+              className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5"
               onClick={() => setSidesheet(SIDESHEET.TODO)}
             >
               <i className="fa-regular fa-calendar-check" />
@@ -1698,7 +1701,7 @@ export default function ControlPanel({
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("theme")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded text-xl -mt-0.5"
+              className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5"
               onClick={() => {
                 const body = document.body;
                 if (body.hasAttribute("theme-mode")) {
@@ -1886,7 +1889,7 @@ export default function ControlPanel({
                       </Dropdown.Menu>
                     }
                   >
-                    <div className="px-3 py-1 hover-2 rounded">
+                    <div className="px-3 py-1 hover-2 rounded-sm">
                       {t(category)}
                     </div>
                   </Dropdown>
