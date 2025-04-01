@@ -20,6 +20,7 @@ import {
   InputNumber,
   Tooltip,
   Spin,
+  Tag,
   Toast,
   Popconfirm,
 } from "@douyinfe/semi-ui";
@@ -31,6 +32,7 @@ import {
   jsonToSQLite,
   jsonToMariaDB,
   jsonToSQLServer,
+  jsonToOracleSQL,
 } from "../../utils/exportSQL/generic";
 import {
   ObjectType,
@@ -833,13 +835,15 @@ export default function ControlPanel({
       import_from: {
         children: [
           {
-            JSON: fileImport,
+            function: fileImport,
+            name: "JSON",
           },
           {
-            DBML: () => {
+            function: () => {
               setModal(MODAL.IMPORT);
               setImportFrom(IMPORT_FROM.DBML);
             },
+            name: "DBML",
           },
         ],
       },
@@ -847,39 +851,53 @@ export default function ControlPanel({
         ...(database === DB.GENERIC && {
           children: [
             {
-              MySQL: () => {
+              function: () => {
                 delaySetModal(MODAL.IMPORT_SRC, () => {
                   setImportDb(DB.MYSQL);
                 });
               },
+              name: "MySQL",
             },
             {
-              PostgreSQL: () => {
+              function: () => {
                 delaySetModal(MODAL.IMPORT_SRC, () => {
                   setImportDb(DB.POSTGRES);
                 });
               },
+              name: "PostgreSQL",
             },
             {
-              SQLite: () => {
+              function: () => {
                 delaySetModal(MODAL.IMPORT_SRC, () => {
                   setImportDb(DB.SQLITE);
                 });
               },
+              name: "SQLite",
             },
             {
-              MariaDB: () => {
+              function: () => {
                 delaySetModal(MODAL.IMPORT_SRC, () => {
                   setImportDb(DB.MARIADB);
                 });
               },
+              name: "MariaDB",
             },
             {
-              MSSQL: () => {
+              function: () => {
                 delaySetModal(MODAL.IMPORT_SRC, () => {
                   setImportDb(DB.MSSQL);
                 });
               },
+              name: "MSSQL",
+            },
+            {
+              function: () => {
+                delaySetModal(MODAL.IMPORT_SRC, () => {
+                  setImportDb(DB.ORACLESQL);
+                });
+              },
+              name: "Oracle",
+              label: "Beta",
             },
           ],
         }),
@@ -893,8 +911,8 @@ export default function ControlPanel({
         ...(database === DB.GENERIC && {
           children: [
             {
-              MySQL: () => {
-
+              name: "MySQL",
+              function: () => {
                 delaySetModal(MODAL.CODE, () => {
                   const src = jsonToMySQL({
                     tables: tables,
@@ -907,11 +925,12 @@ export default function ControlPanel({
                     data: src,
                     extension: "sql",
                   }));
-                });
-              },
+                },)
+              }
             },
             {
-              PostgreSQL: () => {
+              name: "PostgreSQL",
+              function: () => {
                 delaySetModal(MODAL.CODE, () => {
                   const src = jsonToPostgreSQL({
                     tables: tables,
@@ -924,11 +943,12 @@ export default function ControlPanel({
                     data: src,
                     extension: "sql",
                   }));
-                });
-              },
+                },)
+              }
             },
             {
-              SQLite: () => {
+              name: "SQLite",
+              function: () => {
                 delaySetModal(MODAL.CODE, () => {
                   const src = jsonToSQLite({
                     tables: tables,
@@ -941,11 +961,12 @@ export default function ControlPanel({
                     data: src,
                     extension: "sql",
                   }));
-                });
-              },
+                })
+              }
             },
             {
-              MariaDB: () => {
+              name: "MariaDB",
+              function: () => {
                 delaySetModal(MODAL.CODE, () => {
                   const src = jsonToMariaDB({
                     tables: tables,
@@ -958,11 +979,12 @@ export default function ControlPanel({
                     data: src,
                     extension: "sql",
                   }));
-                });
-              },
+                },)
+              }
             },
             {
-              MSSQL: () => {
+              name: "MSSQL",
+              function: () => {
                 delaySetModal(MODAL.CODE, () => {
                   const src = jsonToSQLServer({
                     tables: tables,
@@ -975,7 +997,25 @@ export default function ControlPanel({
                     data: src,
                     extension: "sql",
                   }));
+                },)
+              },
+            },
+            {
+              label: "Beta",
+              name: "Oracle",
+              function: () => {
+                setModal(MODAL.CODE);
+                const src = jsonToOracleSQL({
+                  tables: tables,
+                  references: relationships,
+                  types: types,
+                  database: database,
                 });
+                setExportData((prev) => ({
+                  ...prev,
+                  data: src,
+                  extension: "sql",
+                }));
               },
             },
           ],
@@ -1001,7 +1041,8 @@ export default function ControlPanel({
       export_as: {
         children: [
           {
-            PNG: () => {
+            name: "PNG",
+            function: () => {
               delaySetModal(MODAL.IMG, () => {
                 toPng(document.getElementById("canvas")).then(dataUrl => {
                   changeExportData((prev) => ({
@@ -1010,11 +1051,12 @@ export default function ControlPanel({
                     extension: "png",
                   }))
                 })
-              });
+              })
             }
           },
           {
-            JPEG: () => {
+            name: "JPEG",
+            function: () => {
               delaySetModal(MODAL.IMG, () => {
                 toJpeg(document.getElementById("canvas"), { quality: 0.95 }).then(
                   function (dataUrl) {
@@ -1029,22 +1071,25 @@ export default function ControlPanel({
             },
           },
           {
-            SVG: () => {
-              const filter = (node) => node.tagName !== "i";
-              toSvg(document.getElementById("canvas"), { filter: filter }).then(
-                function (dataUrl) {
-                  setExportData((prev) => ({
-                    ...prev,
-                    data: dataUrl,
-                    extension: "svg",
-                  }));
-                },
-              );
-              setModal(MODAL.IMG);
+            name: "SVG",
+            function: () => {
+              delaySetModal(MODAL.IMG, () => {
+                const filter = (node) => node.tagName !== "i";
+                toSvg(document.getElementById("canvas"), { filter: filter }).then(
+                  function (dataUrl) {
+                    changeExportData((prev) => ({
+                      ...prev,
+                      data: dataUrl,
+                      extension: "svg",
+                    }));
+                  },
+                );
+              });
             },
           },
           {
-            JSON: () => {
+            name: "JSON",
+            function: () => {
               delaySetModal(MODAL.CODE, () => {
                 const result = JSON.stringify(
                   {
@@ -1069,23 +1114,8 @@ export default function ControlPanel({
             },
           },
           {
-            SVG: () => {
-              delaySetModal(MODAL.IMG, () => {
-                const filter = (node) => node.tagName !== "i";
-                toSvg(document.getElementById("canvas"), { filter: filter }).then(
-                  function (dataUrl) {
-                    changeExportData((prev) => ({
-                      ...prev,
-                      data: dataUrl,
-                      extension: "svg",
-                    }));
-                  },
-                );
-              });
-            },
-          },
-          {
-            DBML: () => {
+            name: "DBML",
+            function: () => {
               setModal(MODAL.CODE);
               const result = toDBML({
                 tables,
@@ -1100,31 +1130,8 @@ export default function ControlPanel({
             },
           },
           {
-            PDF: () => {
-              toastLoading((loadingId) => {
-                const canvas = document.getElementById("canvas");
-                toJpeg(canvas).then(function (dataUrl) {
-                  const doc = new jsPDF("l", "px", [
-                    canvas.offsetWidth,
-                    canvas.offsetHeight,
-                  ]);
-                  doc.addImage(
-                    dataUrl,
-                    "jpeg",
-                    0,
-                    0,
-                    canvas.offsetWidth,
-                    canvas.offsetHeight,
-                  );
-                  doc.save(`${getFileName()}.pdf`);
-                }).finally(() => {
-                  Toast.close(loadingId);
-                });
-              });
-            },
-          },
-          {
-            DRAWDB: () => {
+            name: "DRAWDB",
+            function: () => {
               toastLoading((loadingId) => {
                 const result = JSON.stringify(
                   {
@@ -1151,7 +1158,33 @@ export default function ControlPanel({
             },
           },
           {
-            MERMAID: () => {
+            name: "PDF",
+            function: () => {
+              toastLoading((loadingId) => {
+                const canvas = document.getElementById("canvas");
+                toJpeg(canvas).then(function (dataUrl) {
+                  const doc = new jsPDF("l", "px", [
+                    canvas.offsetWidth,
+                    canvas.offsetHeight,
+                  ]);
+                  doc.addImage(
+                    dataUrl,
+                    "jpeg",
+                    0,
+                    0,
+                    canvas.offsetWidth,
+                    canvas.offsetHeight,
+                  );
+                  doc.save(`${getFileName()}.pdf`);
+                }).finally(() => {
+                  Toast.close(loadingId);
+                });
+              });
+            },
+          },
+          {
+            name: "Mermaid",
+            function: () => {
               delaySetModal(MODAL.CODE, () => {
                 const result = jsonToMermaid({
                   tables: tables,
@@ -1166,11 +1199,12 @@ export default function ControlPanel({
                   data: result,
                   extension: "md",
                 }));
-              });
+              })
             },
           },
           {
-            readme: () => {
+            name: "Markdown",
+            function: () => {
               delaySetModal(MODAL.CODE, () => {
                 const result = jsonToDocumentation({
                   tables: tables,
@@ -1187,7 +1221,7 @@ export default function ControlPanel({
                   data: result,
                   extension: "md",
                 }));
-              });
+              })
             },
           },
         ],
@@ -1375,7 +1409,8 @@ export default function ControlPanel({
       theme: {
         children: [
           {
-            light: () => {
+            name: t("light"),
+            function: () => {
               const body = document.body;
               if (body.hasAttribute("theme-mode")) {
                 body.setAttribute("theme-mode", "light");
@@ -1385,7 +1420,8 @@ export default function ControlPanel({
             },
           },
           {
-            dark: () => {
+            name: t("dark"),
+            function: () => {
               const body = document.body;
               if (body.hasAttribute("theme-mode")) {
                 body.setAttribute("theme-mode", "dark");
@@ -1706,9 +1742,9 @@ export default function ControlPanel({
                 const body = document.body;
                 if (body.hasAttribute("theme-mode")) {
                   if (body.getAttribute("theme-mode") === "light") {
-                    menu["view"]["theme"].children[1]["dark"]();
+                    menu["view"]["theme"].children[1].function();
                   } else {
-                    menu["view"]["theme"].children[0]["light"]();
+                    menu["view"]["theme"].children[0].function();
                   }
                 }
               }}
@@ -1807,7 +1843,7 @@ export default function ControlPanel({
                           if (menu[category][item].children) {
                             return (
                               <Dropdown
-                                style={{ width: "120px" }}
+                                style={{ width: "150px" }}
                                 key={item}
                                 position="rightTop"
                                 render={
@@ -1816,9 +1852,18 @@ export default function ControlPanel({
                                       (e, i) => (
                                         <Dropdown.Item
                                           key={i}
-                                          onClick={() => { setTimeout(() => { Object.values(e)[0]?.() }, 200) }}
+                                          onClick={e.function}
+                                          className="flex justify-between"
                                         >
-                                          {t(Object.keys(e)[0])}
+                                          <span>{e.name}</span>
+                                          {e.label && (
+                                            <Tag
+                                              size="small"
+                                              color="light-blue"
+                                            >
+                                              {e.label}
+                                            </Tag>
+                                          )}
                                         </Dropdown.Item>
                                       ),
                                     )}
