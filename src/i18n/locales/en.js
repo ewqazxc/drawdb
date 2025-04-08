@@ -248,6 +248,8 @@ const en = {
     locate: "Locate",
     docs: "Docs",
     supported_types: "Supported file types:",
+    bulk_update: "Bulk update",
+    multiselect: "Multiselect",
   },
 };
 

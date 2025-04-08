@@ -224,6 +224,8 @@ const zh = {
     locate: "定位到视图",
     docs: "文档",
     supported_types: "支持的文件类型:",
+    bulk_update: "批量更新",
+    multiselect: "批量选择",
   },
 };
 
