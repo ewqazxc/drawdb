@@ -103,6 +103,7 @@ const zh = {
     type: "类型",
     null: "空",
     not_null: "非空",
+    nullable: "可空",
     primary: "主键",
     unique: "唯一",
     autoincrement: "自增",
