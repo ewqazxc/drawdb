@@ -13,11 +13,6 @@ export const routeConfig = [
     useThemedPage: true,
   },
   {
-    path: "/survey",
-    component: lazy(() => import("../pages/Survey")),
-    useThemedPage: true,
-  },
-  {
     path: "/bug-report",
     component: lazy(() => import("../pages/BugReport")),
     useThemedPage: true,

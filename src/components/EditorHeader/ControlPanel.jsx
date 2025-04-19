@@ -1544,9 +1544,6 @@ export default function ControlPanel({
       report_bug: {
         function: () => window.open("/bug-report", "_blank"),
       },
-      feedback: {
-        function: () => window.open("/survey", "_blank"),
-      },
     },
   };
 
