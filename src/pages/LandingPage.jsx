@@ -321,7 +321,7 @@ const features = [
     title: "Keyboard shortcuts",
     content: (
       <div>
-        Speed up development with keyboard shortuts. See all available shortcuts
+        Speed up development with keyboard shortcuts. See all available shortcuts
         <Link
           to={`${socials.docs}/shortcuts`}
           className="ms-1.5 text-blue-500 hover:underline"
@@ -337,7 +337,7 @@ const features = [
     title: "Templates",
     content: (
       <div>
-        Start off with pre-built templates. Get a quick start or get inspirition
+        Start off with pre-built templates. Get a quick start or get inspiration
         for your design.
       </div>
     ),
