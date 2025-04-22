@@ -48,7 +48,6 @@ const zh = {
     reset_view: "重置视图",
     show_datatype: "显示数据类型",
     show_grid: "显示网格",
-    show_datatype: "显示数据类型",
     show_cardinality: "显示关系",
     theme: "主题",
     light: "浅色",
