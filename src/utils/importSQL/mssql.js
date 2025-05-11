@@ -238,7 +238,7 @@ export function fromMSSQL(ast, diagramDb = DB.GENERIC) {
           );
           if (!startField) return;
 
-          relationship.name = formatSQLRelationshipName(startTable, startField, endTable);
+          relationship.name = formatSQLRelationshipName(startTableName, startFieldName, endTableName);
           relationship.startTableId = startTable.id;
           relationship.startFieldId = startField.id;
           relationship.endTableId = endTable.id;
