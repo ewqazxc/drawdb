@@ -56,7 +56,7 @@ export default function Canvas() {
   } = useSelect();
   const [dragging, setDragging] = useState({
     element: ObjectType.NONE,
-    id: -1,
+    id: null,
     prevX: 0,
     prevY: 0,
     initialPositions: [],
@@ -74,8 +74,8 @@ export default function Canvas() {
   });
   const [grabOffset, setGrabOffset] = useState({ x: 0, y: 0 });
   const [hoveredTable, setHoveredTable] = useState({
-    tableId: -1,
-    field: -2,
+    tableId: null,
+    fieldId: null,
   });
   const [panning, setPanning] = useState({
     isPanning: false,
@@ -168,7 +168,7 @@ export default function Canvas() {
   const getElement = (element) => {
     switch (element.type) {
       case ObjectType.TABLE:
-        return tables[element.id];
+        return tables.find((t) => t.id === element.id);
       case ObjectType.AREA:
         return areas[element.id];
       case ObjectType.NOTE:
@@ -265,7 +265,7 @@ export default function Canvas() {
       });
     } else if (
       dragging.element !== ObjectType.NONE &&
-      dragging.id >= 0 &&
+      dragging.id !== null &&
       bulkSelectedElements.length
     ) {
       const currentX = pointer.spaces.diagram.x + grabOffset.x;
@@ -275,9 +275,10 @@ export default function Canvas() {
 
       for (const element of bulkSelectedElements) {
         if (element.type === ObjectType.TABLE) {
+          const { x, y } = tables.find((e) => e.id === element.id);
           updateTable(element.id, {
-            x: tables[element.id].x + deltaX,
-            y: tables[element.id].y + deltaY,
+            x: x + deltaX,
+            y: y + deltaY,
           });
         }
         if (element.type === ObjectType.AREA) {
@@ -318,21 +319,21 @@ export default function Canvas() {
             (panning.cursorStart.y - pointer.spaces.screen.y) / transform.zoom,
         },
       }));
-    } else if (dragging.element === ObjectType.TABLE && dragging.id >= 0) {
+    } else if (dragging.element === ObjectType.TABLE && dragging.id !== null) {
       updateTable(dragging.id, {
         x: pointer.spaces.diagram.x + grabOffset.x,
         y: pointer.spaces.diagram.y + grabOffset.y,
       });
     } else if (
       dragging.element === ObjectType.AREA &&
-      dragging.id >= 0 &&
+      dragging.id !== null &&
       areaResize.id === -1
     ) {
       updateArea(dragging.id, {
         x: pointer.spaces.diagram.x + grabOffset.x,
         y: pointer.spaces.diagram.y + grabOffset.y,
       });
-    } else if (dragging.element === ObjectType.NOTE && dragging.id >= 0) {
+    } else if (dragging.element === ObjectType.NOTE && dragging.id !== null) {
       updateNote(dragging.id, {
         x: pointer.spaces.diagram.x + grabOffset.x,
         y: pointer.spaces.diagram.y + grabOffset.y,
@@ -442,7 +443,10 @@ export default function Canvas() {
   };
 
   const didPan = () =>
-    !(transform.pan.x === panning.panStart.x && transform.pan.y === panning.panStart.y);
+    !(
+      transform.pan.x === panning.panStart.x &&
+      transform.pan.y === panning.panStart.y
+    );
 
   /**
    * @param {PointerEvent} e
@@ -504,7 +508,7 @@ export default function Canvas() {
     }
     setDragging({
       element: ObjectType.NONE,
-      id: -1,
+      id: null,
       prevX: 0,
       prevY: 0,
       initialPositions: [],
@@ -586,7 +590,7 @@ export default function Canvas() {
     setPanning((old) => ({ ...old, isPanning: false }));
     setDragging({
       element: ObjectType.NONE,
-      id: -1,
+      id: null,
       prevX: 0,
       prevY: 0,
       initialPositions: [],
@@ -595,28 +599,36 @@ export default function Canvas() {
   };
 
   const handleLinking = () => {
-    if (hoveredTable.tableId < 0) return;
-    if (hoveredTable.field < 0) return;
-    if (
-      !areFieldsCompatible(
-        database,
-        tables[linkingLine.startTableId].fields[linkingLine.startFieldId],
-        tables[hoveredTable.tableId].fields[hoveredTable.field],
-      )
-    ) {
+    if (hoveredTable.tableId === null) return;
+    if (hoveredTable.fieldId === null) return;
+
+    const { fields: startTableFields } = tables.find(
+      (t) => t.id === linkingLine.startTableId,
+    );
+    const { type: startType } = startTableFields.find(
+      (f) => f.id === linkingLine.startFieldId,
+    );
+    const { fields: endTableFields } = tables.find(
+      (t) => t.id === hoveredTable.tableId,
+    );
+    const { type: endType } = endTableFields.find(
+      (f) => f.id === hoveredTable.fieldId,
+    );
+
+    if (!areFieldsCompatible(database, startType, endType)) {
       Toast.info(t("cannot_connect"));
       return;
     }
     if (
       linkingLine.startTableId === hoveredTable.tableId &&
-      linkingLine.startFieldId === hoveredTable.field
+      linkingLine.startFieldId === hoveredTable.fieldId
     )
       return;
 
     const newRelationship = {
       ...linkingLine,
       endTableId: hoveredTable.tableId,
-      endFieldId: hoveredTable.field,
+      endFieldId: hoveredTable.fieldId,
       cardinality: Cardinality.ONE_TO_ONE,
       updateConstraint: Constraint.NONE,
       deleteConstraint: Constraint.NONE,

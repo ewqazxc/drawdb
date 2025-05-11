@@ -30,6 +30,7 @@ export default function Share({ title, setModal }) {
 
   const diagramToString = useCallback(() => {
     return JSON.stringify({
+      title,
       tables: tables,
       relationships: relationships,
       notes: notes,
@@ -37,7 +38,6 @@ export default function Share({ title, setModal }) {
       database: database,
       ...(databases[database].hasTypes && { types: types }),
       ...(databases[database].hasEnums && { enums: enums }),
-      title: title,
       transform: transform,
     });
   }, [

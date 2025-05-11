@@ -1,10 +1,20 @@
 
 export const formatRelationshipName = (idObj, tables) => {
-  const { startTableId, endTableId, startFieldId, endFieldId } = idObj;
-  const linkingTable = tables[startTableId];
-  const hoveredTable = tables[endTableId];
-  return `fk_${linkingTable.name}_${linkingTable.fields[startFieldId].name
-    }_${hoveredTable.name}_${hoveredTable.fields[endFieldId].name}`;
+  const { linkingLine, hoveredTable } = idObj;
+
+  const { fields: startTableFields, name: startTableName } = tables.find(
+    (t) => t.id === linkingLine.startTableId,
+  );
+  const { name: startFieldName } = startTableFields.find(
+    (f) => f.id === linkingLine.startFieldId,
+  );
+  const { fields: endTableFields, name: endTableName } = tables.find(
+    (t) => t.id === hoveredTable.tableId,
+  );
+  const { name: endFieldName } = endTableFields.find(
+    (f) => f.id === hoveredTable.fieldId,
+  );
+  return `fk_${startTableName}_${startFieldName}_${endTableName}_${endFieldName}`;
 };
 export const formatSQLRelationshipName = (startTableName, startFieldName, endTableName, options) => {
   let name = "fk_" + startTableName + "_" + startFieldName + "_" + endTableName;
