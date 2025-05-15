@@ -74,7 +74,7 @@ function TableListItem({ table }) {
           <>
             <div className="flex items-center gap-2">
               <DragHandle id={table.id} />
-              <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+              <div className="overflow-hidden text-ellipsis whitespace-nowrap flex items-center">
                 <LocateTargetPosition position={{ x: table.x, y: table.y }} />
                 {table.name}
               </div>
