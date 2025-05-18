@@ -58,9 +58,8 @@ export default function TablesTab() {
             afterChange={() => setSaveState(State.SAVING)}
             renderItem={(item) => <TableListItem table={item} />}
           />
-        </Collapse >
-      )
-}
+        </Collapse>
+      )}
     </>
   );
 }
