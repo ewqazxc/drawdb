@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @config '../tailwind.config.js';
 
@@ -75,8 +75,8 @@
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -89,11 +89,15 @@
 
 ::-webkit-scrollbar-thumb {
   background-color: rgba(var(--semi-grey-2), 1);
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: rgba(var(--semi-grey-3), 1);
+}
+
+.menu::-webkit-scrollbar-thumb {
+  background-color: rgba(var(--semi-grey-4), 1);
 }
 
 .theme {
