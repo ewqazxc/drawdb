@@ -1351,7 +1351,7 @@ export default function ControlPanel({
       },
       reset_view: {
         function: resetView,
-        shortcut: "Ctrl+R",
+        shortcut: "Enter/Return",
       },
       show_datatype: {
         state: settings.showDataTypes ? (
@@ -1543,7 +1543,7 @@ export default function ControlPanel({
     preventDefault: true,
   });
   useHotkeys("mod+alt+c", copyAsImage, { preventDefault: true });
-  useHotkeys("mod+r", resetView, { preventDefault: true });
+  useHotkeys("enter", resetView, { preventDefault: true });
   useHotkeys("mod+h", () => window.open(socials.docs, "_blank"), {
     preventDefault: true,
   });
