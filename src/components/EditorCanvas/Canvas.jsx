@@ -127,6 +127,8 @@ export default function Canvas() {
     });
 
     areas.forEach((area) => {
+      if (area.locked) return;
+
       if (
         isInsideRect(
           {
@@ -146,6 +148,8 @@ export default function Canvas() {
     });
 
     notes.forEach((note) => {
+      if (note.locked) return;
+
       if (
         isInsideRect(
           {
@@ -334,11 +338,17 @@ export default function Canvas() {
       dragging.id !== null &&
       areaResize.id === -1
     ) {
+      const area = areas.find((t) => t.id === dragging.id);
+      if (area.locked) return;
+
       updateArea(dragging.id, {
         x: pointer.spaces.diagram.x + grabOffset.x,
         y: pointer.spaces.diagram.y + grabOffset.y,
       });
     } else if (dragging.element === ObjectType.NOTE && dragging.id !== null) {
+      const note = notes.find((t) => t.id === dragging.id);
+      if (note.locked) return;
+
       updateNote(dragging.id, {
         x: pointer.spaces.diagram.x + grabOffset.x,
         y: pointer.spaces.diagram.y + grabOffset.y,
