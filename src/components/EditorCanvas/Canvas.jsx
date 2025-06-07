@@ -23,13 +23,14 @@ import {
   useAreas,
   useNotes,
   useLayout,
+  useSaveState,
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "usehooks-ts";
 import { areFieldsCompatible } from "../../utils/utils";
 import { formatRelationshipName } from "../../utils/formatUtils";
 import { getRectFromEndpoints, isInsideRect } from "../../utils/rect";
-import { noteWidth } from "../../data/constants";
+import { noteWidth, State } from "../../data/constants";
 
 export default function Canvas() {
   const { t } = useTranslation();
@@ -43,6 +44,7 @@ export default function Canvas() {
 
   const { tables, updateTable, relationships, addRelationship, database } =
     useDiagram();
+  const { setSaveState } = useSaveState();
   const { areas, updateArea } = useAreas();
   const { notes, updateNote } = useNotes();
   const { layout } = useLayout();
@@ -541,19 +543,7 @@ export default function Canvas() {
     }
 
     if (panning.isPanning && didPan()) {
-      setUndoStack((prev) => [
-        ...prev,
-        {
-          action: Action.PAN,
-          undo: { x: panning.panStart.x, y: panning.panStart.y },
-          redo: transform.pan,
-          message: t("move_element", {
-            coords: `(${transform?.pan.x}, ${transform?.pan.y})`,
-            name: "diagram",
-          }),
-        },
-      ]);
-      setRedoStack([]);
+      setSaveState(State.SAVING);
       setSelectedElement((prev) => ({
         ...prev,
         element: ObjectType.NONE,
