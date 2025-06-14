@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import { Cardinality, DB } from "../../data/constants";
+import { Cardinality, Constraint, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 import { formatSQLRelationshipName } from "../formatUtils";
 import { buildSQLFromAST } from "./shared";
@@ -14,6 +14,7 @@ const affinity = {
       INTEGER: "INT",
       MEDIUMINT: "INTEGER",
       BIT: "BOOLEAN",
+      "CHATACTER VARYING": "VARCHAR",
     },
     { get: (target, prop) => (prop in target ? target[prop] : "BLOB") },
   ),
@@ -51,8 +52,11 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
                 d.definition.dataType,
               ),
             )?.name;
-            if (!type && !dbToTypes[diagramDb][d.definition.dataType])
-              type = affinity[diagramDb][d.definition.dataType.toUpperCase()];
+
+            type ??=
+              dbToTypes[diagramDb][d.definition.dataType.toUpperCase()].type;
+            type ??= affinity[diagramDb][d.definition.dataType.toUpperCase()];
+
             field.type = type;
 
             if (d.definition.expr && d.definition.expr.type === "expr_list") {
@@ -145,8 +149,8 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
               relationship.endTableId = endTable.id;
               relationship.endFieldId = endField.id;
               relationship.startFieldId = startField.id;
-              let updateConstraint = "No action";
-              let deleteConstraint = "No action";
+              let updateConstraint = Constraint.NONE;
+              let deleteConstraint = Constraint.NONE;
               d.reference_definition.on_action.forEach((c) => {
                 if (c.type === "on update") {
                   updateConstraint = c.value.value;
@@ -179,8 +183,8 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
             const endTableName = d.reference_definition.table[0].table;
             const endFieldName =
               d.reference_definition.definition[0].column.expr.value;
-            let updateConstraint = "No action";
-            let deleteConstraint = "No action";
+            let updateConstraint = Constraint.NONE;
+            let deleteConstraint = Constraint.NONE;
             d.reference_definition.on_action.forEach((c) => {
               if (c.type === "on update") {
                 updateConstraint = c.value.value;
@@ -282,73 +286,77 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
         }
       }
     } else if (e.type === "alter") {
-      e.expr.forEach((expr) => {
-        if (
-          expr.action === "add" &&
-          expr.create_definitions.constraint_type.toLowerCase() ===
-          "foreign key"
-        ) {
-          const relationship = {};
-          const startTableName = e.table[0].table;
-          const startFieldName =
-            expr.create_definitions.definition[0].column.expr.value;
-          const endTableName =
-            expr.create_definitions.reference_definition.table[0].table;
-          const endFieldName =
-            expr.create_definitions.reference_definition.definition[0].column
-              .expr.value;
-          let updateConstraint = "No action";
-          let deleteConstraint = "No action";
-          expr.create_definitions.reference_definition.on_action.forEach(
-            (c) => {
-              if (c.type === "on update") {
-                updateConstraint = c.value.value;
-                updateConstraint =
-                  updateConstraint[0].toUpperCase() +
-                  updateConstraint.substring(1);
-              } else if (c.type === "on delete") {
-                deleteConstraint = c.value.value;
-                deleteConstraint =
-                  deleteConstraint[0].toUpperCase() +
-                  deleteConstraint.substring(1);
-              }
-            },
-          );
+      if (Array.isArray(e.expr)) {
+        e.expr.forEach((expr) => {
+          if (
+            expr.action === "add" &&
+            expr.create_definitions.constraint_type.toLowerCase() ===
+            "foreign key"
+          ) {
+            const relationship = {};
+            const startTableName = e.table[0].table;
+            const startFieldName =
+              expr.create_definitions.definition[0].column.expr.value;
+            const endTableName =
+              expr.create_definitions.reference_definition.table[0].table;
+            const endFieldName =
+              expr.create_definitions.reference_definition.definition[0].column
+                .expr.value;
+            let updateConstraint = Constraint.NONE;
+            let deleteConstraint = Constraint.NONE;
+            expr.create_definitions.reference_definition.on_action.forEach(
+              (c) => {
+                if (c.type === "on update") {
+                  updateConstraint = c.value.value;
+                  updateConstraint =
+                    updateConstraint[0].toUpperCase() +
+                    updateConstraint.substring(1);
+                } else if (c.type === "on delete") {
+                  deleteConstraint = c.value.value;
+                  deleteConstraint =
+                    deleteConstraint[0].toUpperCase() +
+                    deleteConstraint.substring(1);
+                }
+              },
+            );
 
-          const startTable = tables.find((t) => t.name === startTableName);
-          if (!startTable) return;
+            const startTable = tables.find((t) => t.name === startTableName);
+            if (!startTable) return;
 
-          const endTable = tables.find((t) => t.name === endTableName);
-          if (!endTable) return;
+            const endTable = tables.find((t) => t.name === endTableName);
+            if (!endTable) return;
 
-          const endField = endTable.fields.find((f) => f.name === endFieldName);
-          if (!endField) return;
+            const endField = endTable.fields.find(
+              (f) => f.name === endFieldName,
+            );
+            if (!endField) return;
 
-          const startField = startTable.fields.find(
-            (f) => f.name === startFieldName,
-          );
-          if (!startField) return;
+            const startField = startTable.fields.find(
+              (f) => f.name === startFieldName,
+            );
+            if (!startField) return;
 
-          relationship.name = relationship.name = formatSQLRelationshipName(startTableName, startFieldName, endTableName);
-          relationship.startTableId = startTable.id;
-          relationship.startFieldId = startField.id;
-          relationship.endTableId = endTable.id;
-          relationship.endFieldId = endField.id;
-          relationship.updateConstraint = updateConstraint;
-          relationship.deleteConstraint = deleteConstraint;
-          relationship.cardinality = Cardinality.ONE_TO_ONE;
-
-          if (startField.unique) {
+            relationship.name = relationship.name = formatSQLRelationshipName(startTableName, startFieldName, endTableName);
+            relationship.startTableId = startTable.id;
+            relationship.startFieldId = startField.id;
+            relationship.endTableId = endTable.id;
+            relationship.endFieldId = endField.id;
+            relationship.updateConstraint = updateConstraint;
+            relationship.deleteConstraint = deleteConstraint;
             relationship.cardinality = Cardinality.ONE_TO_ONE;
-          } else {
-            relationship.cardinality = Cardinality.MANY_TO_ONE;
+
+            if (startField.unique) {
+              relationship.cardinality = Cardinality.ONE_TO_ONE;
+            } else {
+              relationship.cardinality = Cardinality.MANY_TO_ONE;
+            }
+
+            relationships.push(relationship);
+
+            relationships.forEach((r, i) => (r.id = i));
           }
-
-          relationships.push(relationship);
-
-          relationships.forEach((r, i) => (r.id = i));
-        }
-      });
+        });
+      }
     }
   };
 
