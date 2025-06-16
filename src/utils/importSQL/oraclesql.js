@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
 import { Cardinality, Constraint, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
+import { formatSQLRelationshipName } from "../formatUtils";
 
 const affinity = {
   [DB.ORACLESQL]: new Proxy(
@@ -105,12 +106,12 @@ export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
             relationship.name =
               d.name && Boolean(d.name.trim())
                 ? d.name
-                : `fk_${table.name}_${startFieldName}_${endTableName}`;
+                : formatSQLRelationshipName(table.name, startFieldName, endTableName);
             relationship.deleteConstraint =
               d.constraint.reference.on_delete &&
-              Boolean(d.constraint.reference.on_delete.trim())
+                Boolean(d.constraint.reference.on_delete.trim())
                 ? d.constraint.reference.on_delete[0].toUpperCase() +
-                  d.constraint.reference.on_delete.substring(1)
+                d.constraint.reference.on_delete.substring(1)
                 : Constraint.NONE;
 
             if (startField.unique) {

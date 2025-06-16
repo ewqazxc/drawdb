@@ -77,7 +77,6 @@ export function fromDBML(src) {
 
       const relationship = {};
 
-      relationship.name =
       relationship.name = formatSQLRelationshipName(startTableName, startFieldName, endTableName);
 
       relationship.startTableId = startTable.id;
