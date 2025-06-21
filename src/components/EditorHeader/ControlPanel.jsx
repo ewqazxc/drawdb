@@ -1127,6 +1127,7 @@ export default function ControlPanel({
                 tables,
                 relationships,
                 enums,
+                database,
               });
               setExportData((prev) => ({
                 ...prev,
