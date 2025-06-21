@@ -1487,15 +1487,6 @@ export default function ControlPanel({
         function: () =>
           setSettings((prev) => ({ ...prev, autosave: !prev.autosave })),
       },
-      panning: {
-        state: settings.panning ? (
-          <i className="bi bi-toggle-on" />
-        ) : (
-          <i className="bi bi-toggle-off" />
-        ),
-        function: () =>
-          setSettings((prev) => ({ ...prev, panning: !prev.panning })),
-      },
       table_width: {
         function: () => setModal(MODAL.TABLE_WIDTH),
       },
@@ -1692,23 +1683,6 @@ export default function ControlPanel({
               }
             >
               <i className="fa-solid fa-magnifying-glass-minus" />
-            </button>
-          </Tooltip>
-          <Tooltip
-            content={settings.panning ? t("multiselect") : t("panning")}
-            position="bottom"
-          >
-            <button
-              className="py-1 px-2 hover-2 rounded-sm text-lg w-10"
-              onClick={() =>
-                setSettings((prev) => ({ ...prev, panning: !prev.panning }))
-              }
-            >
-              {settings.panning ? (
-                <i className="fa-solid fa-expand" />
-              ) : (
-                <i className="fa-regular fa-hand"></i>
-              )}
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />
