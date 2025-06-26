@@ -290,6 +290,7 @@ export default function WorkSpace() {
         });
         const diagramSrc = res.data.files["share.json"].content;
         const d = JSON.parse(diagramSrc);
+        setGistId(shareId);
         setUndoStack([]);
         setRedoStack([]);
         setLoadedFromGistId(shareId);
