@@ -5,10 +5,12 @@ import { formatSQLRelationshipName } from "../formatUtils";
 
 const affinity = {
   [DB.ORACLESQL]: new Proxy(
-    { INT: "INTEGER" },
-    { NUMERIC: "NUMBER" },
-    { DECIMAL: "NUMBER" },
-    { CHARACTER: "CHAR" },
+    {
+      INT: "INTEGER",
+      NUMERIC: "NUMBER",
+      DECIMAL: "NUMBER",
+      CHARACTER: "CHAR",
+    },
     { get: (target, prop) => (prop in target ? target[prop] : "BLOB") },
   ),
   [DB.GENERIC]: new Proxy(
@@ -26,7 +28,6 @@ export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
   const enums = [];
 
   const parseSingleStatement = (e) => {
-    console.log(e);
     if (e.operation === "create") {
       if (e.object === "table") {
         const table = {};
