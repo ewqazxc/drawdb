@@ -1,4 +1,4 @@
-import { Button, Input, Spin, Toast } from "@douyinfe/semi-ui";
+import { Banner, Button, Input, Spin, Toast } from "@douyinfe/semi-ui";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IdContext } from "../../Workspace";
@@ -25,6 +25,7 @@ export default function Share({ title, setModal }) {
   const { types } = useTypes();
   const { enums } = useEnums();
   const { transform } = useTransform();
+  const [error, setError] = useState(null);
   const url =
     window.location.origin + window.location.pathname + "?shareId=" + gistId;
 
@@ -64,8 +65,9 @@ export default function Share({ title, setModal }) {
       setModal(MODAL.NONE);
     } catch (e) {
       console.error(e);
+      setError(e);
     }
-  }, [gistId, setGistId, setModal]);
+  }, [gistId, setModal, setGistId]);
 
   const updateGist = useCallback(async () => {
     setLoading(true);
@@ -84,6 +86,7 @@ export default function Share({ title, setModal }) {
       });
     } catch (e) {
       console.error(e);
+      setError(e);
     } finally {
       setLoading(false);
     }
@@ -107,6 +110,7 @@ export default function Share({ title, setModal }) {
       setGistId(res.data.id);
     } catch (e) {
       console.error(e);
+      setError(e);
     } finally {
       setLoading(false);
     }
@@ -122,6 +126,7 @@ export default function Share({ title, setModal }) {
         }
       } catch (e) {
         console.error(e);
+        setError(e);
       } finally {
         setLoading(false);
       }
@@ -150,18 +155,30 @@ export default function Share({ title, setModal }) {
 
   return (
     <div>
-      <div className="flex gap-3">
-        <Input value={url} size="large" />
-      </div>
-      <div className="text-xs mt-2">{t("share_info")}</div>
-      <div className="flex gap-2 mt-3">
-        <Button block onClick={unshare}>
-          {t("unshare")}
-        </Button>
-        <Button block theme="solid" icon={<IconLink />} onClick={copyLink}>
-          {t("copy_link")}
-        </Button>
-      </div>
+      {error && (
+        <Banner
+          description={t("oops_smth_went_wrong")}
+          type="danger"
+          closeIcon={null}
+          fullMode={false}
+        />
+      )}
+      {!error && (
+        <>
+          <div className="flex gap-3">
+            <Input value={url} size="large" readonly />
+          </div>
+          <div className="text-xs mt-2">{t("share_info")}</div>
+          <div className="flex gap-2 mt-3">
+            <Button block onClick={unshare}>
+              {t("unshare")}
+            </Button>
+            <Button block theme="solid" icon={<IconLink />} onClick={copyLink}>
+              {t("copy_link")}
+            </Button>
+          </div>
+        </>
+      )}
     </div>
   );
 }

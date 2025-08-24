@@ -20,26 +20,35 @@ import {
 } from "../hooks";
 import FloatingControls from "./FloatingControls";
 import SelectDbModal from "./Modal/SelectDbModal";
+import { Button, Modal } from "@douyinfe/semi-ui";
+import { IconAlertTriangle } from "@douyinfe/semi-icons";
 import { useTranslation } from "react-i18next";
 import { databases } from "../data/databases";
 import { isRtl } from "../i18n/utils/rtl";
 import { useSearchParams } from "react-router-dom";
 import { octokit } from "../data/octokit";
 
-export const IdContext = createContext({ gistId: "", setGistId: () => {} });
+export const IdContext = createContext({
+  gistId: "",
+  setGistId: () => { },
+  version: "",
+  setVersion: () => { },
+});
 
 const SIDEPANEL_MIN_WIDTH = 384;
 
 export default function WorkSpace() {
   const [id, setId] = useState(0);
   const [gistId, setGistId] = useState("");
+  const [version, setVersion] = useState("");
   const [loadedFromGistId, setLoadedFromGistId] = useState("");
   const [title, setTitle] = useState("Untitled Diagram");
   const [resize, setResize] = useState(false);
   const [width, setWidth] = useState(SIDEPANEL_MIN_WIDTH);
   const [lastSaved, setLastSaved] = useState("");
   const [showSelectDbModal, setShowSelectDbModal] = useState(false);
-  const { layout } = useLayout();
+  const [showRestoreModal, setShowRestoreModal] = useState(false);
+  const { layout, setLayout } = useLayout();
   const { settings } = useSettings();
   const { types, setTypes } = useTypes();
   const { areas, setAreas } = useAreas();
@@ -57,7 +66,7 @@ export default function WorkSpace() {
     setDatabase,
   } = useDiagram();
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   let [searchParams, setSearchParams] = useSearchParams();
   const handleResize = (e) => {
     if (!resize) return;
@@ -66,8 +75,6 @@ export default function WorkSpace() {
   };
 
   const save = useCallback(async () => {
-    if (saveState !== State.SAVING) return;
-
     const name = window.name.split(" ");
     const op = name[0];
     const saveAsDiagram = window.name === "" || op === "d" || op === "lt";
@@ -162,7 +169,6 @@ export default function WorkSpace() {
     enums,
     gistId,
     loadedFromGistId,
-    saveState,
   ]);
   const load = useCallback(async () => {
     let initDatabase = database;
@@ -289,23 +295,24 @@ export default function WorkSpace() {
           },
         });
         const diagramSrc = res.data.files["share.json"].content;
-        const d = JSON.parse(diagramSrc);
+        const parsedDiagram = JSON.parse(diagramSrc);
         setGistId(shareId);
         setUndoStack([]);
         setRedoStack([]);
+        setGistId(shareId);
         setLoadedFromGistId(shareId);
-        setDatabase(d.database);
-        setTitle(d.title);
-        setTables(d.tables);
-        setRelationships(d.relationships);
-        setNotes(d.notes);
-        setAreas(d.subjectAreas);
-        setTransform(d.transform);
-        if (databases[d.database].hasTypes) {
-          setTypes(d.types ?? []);
+        setDatabase(parsedDiagram.database);
+        setTitle(parsedDiagram.title);
+        setTables(parsedDiagram.tables);
+        setRelationships(parsedDiagram.relationships);
+        setNotes(parsedDiagram.notes);
+        setAreas(parsedDiagram.subjectAreas);
+        setTransform(parsedDiagram.transform);
+        if (databases[parsedDiagram.database].hasTypes) {
+          setTypes(parsedDiagram.types ?? []);
         }
-        if (databases[d.database].hasEnums) {
-          setEnums(d.enums ?? []);
+        if (databases[parsedDiagram.database].hasEnums) {
+          setEnums(parsedDiagram.enums ?? []);
         }
       } catch (e) {
         console.error(e);
@@ -367,6 +374,12 @@ export default function WorkSpace() {
     searchParams,
   ]);
 
+  const returnToCurrentDiagram = async () => {
+    await load();
+    setLayout((prev) => ({ ...prev, readOnly: false }));
+    setVersion(null);
+  };
+
   useEffect(() => {
     if (
       tables?.length === 0 &&
@@ -397,8 +410,12 @@ export default function WorkSpace() {
   ]);
 
   useEffect(() => {
+    if (layout.readOnly) return;
+
+    if (saveState !== State.SAVING) return;
+
     save();
-  }, [saveState, save]);
+  }, [saveState, layout, save]);
 
   useEffect(() => {
     document.title = "Editor | drawDB";
@@ -416,7 +433,7 @@ export default function WorkSpace() {
   );
   return (
     <div className="h-full flex flex-col overflow-hidden theme">
-      <IdContext.Provider value={{ gistId, setGistId }}>
+      <IdContext.Provider value={{ gistId, setGistId, version, setVersion }}>
         <ControlPanel
           diagramId={id}
           setDiagramId={setId}
@@ -445,6 +462,23 @@ export default function WorkSpace() {
           <CanvasContextProvider className="h-full w-full">
             <Canvas saveState={saveState} setSaveState={setSaveState} />
           </CanvasContextProvider>
+          {version && (
+            <div className="absolute right-8 top-2 space-x-2">
+              <Button
+                icon={<i className="fa-solid fa-rotate-right mt-0.5"></i>}
+                onClick={() => setShowRestoreModal(true)}
+              >
+                {t("restore_version")}
+              </Button>
+              <Button
+                type="tertiary"
+                onClick={returnToCurrentDiagram}
+                icon={<i className="bi bi-arrow-return-right mt-1"></i>}
+              >
+                {t("return_to_current")}
+              </Button>
+            </div>
+          )}
           {!(layout.sidebar || layout.toolbar || layout.header) && (
             <div className="fixed right-5 bottom-4">
               <FloatingControls />
@@ -456,6 +490,27 @@ export default function WorkSpace() {
         showSelectDbModal={showSelectDbModal}
         onOk={handleSelectedDb}
       />
+      <Modal
+        visible={showRestoreModal}
+        centered
+        closable
+        onCancel={() => setShowRestoreModal(false)}
+        title={
+          <span className="flex items-center gap-2">
+            <IconAlertTriangle className="text-amber-400" size="extra-large" />{" "}
+            {t("restore_version")}
+          </span>
+        }
+        okText={t("continue")}
+        cancelText={t("cancel")}
+        onOk={() => {
+          setLayout((prev) => ({ ...prev, readOnly: false }));
+          setShowRestoreModal(false);
+          setVersion(null);
+        }}
+      >
+        {t("restore_warning")}
+      </Modal>
     </div>
   );
 }
