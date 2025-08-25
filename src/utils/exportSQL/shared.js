@@ -7,7 +7,7 @@ export function parseDefault(field, database = DB.GENERIC) {
   if (
     isFunction(field.default) ||
     isKeyword(field.default) ||
-    !dbToTypes[database][field.type].hasQuotes
+    !dbToTypes[database][field.type]?.hasQuotes
   ) {
     return field.default;
   }
