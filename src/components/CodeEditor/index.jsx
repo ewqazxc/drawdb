@@ -1,10 +1,13 @@
-import { Editor } from "@monaco-editor/react";
+import * as monaco from 'monaco-editor';
+import { Editor, loader } from "@monaco-editor/react";
 import { useDiagram, useSettings } from "../../hooks";
 import { Button, Toast } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import { IconCopy } from "@douyinfe/semi-icons";
 import { setUpDBML } from "./setUpDBML";
 import "./styles.css";
+
+loader.config({ monaco });
 
 export default function CodeEditor({
   showCopyButton,
