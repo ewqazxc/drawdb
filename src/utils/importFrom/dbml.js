@@ -83,7 +83,7 @@ export function fromDBML(src) {
       relationship.endTableId = endTable.id;
       relationship.endFieldId = endField.id;
       relationship.startFieldId = startField.id;
-      relationship.id = relationships.length;
+      relationship.id = nanoid();
 
       relationship.updateConstraint = ref.onDelete
         ? ref.onDelete[0].toUpperCase() + ref.onDelete.substring(1)

@@ -99,6 +99,7 @@ export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
             );
             if (!startField) return;
 
+            relationship.id = nanoid();
             relationship.startTableId = table.id;
             relationship.startFieldId = startField.id;
             relationship.endTableId = endTable.id;
@@ -130,8 +131,6 @@ export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
   };
 
   ast.forEach((e) => parseSingleStatement(e));
-
-  relationships.forEach((r, i) => (r.id = i));
 
   return { tables, relationships, enums };
 }

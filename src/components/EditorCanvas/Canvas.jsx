@@ -32,6 +32,7 @@ import { areFieldsCompatible, getTableHeight } from "../../utils/utils";
 import { formatRelationshipName } from "../../utils/formatUtils";
 import { getRectFromEndpoints, isInsideRect } from "../../utils/rect";
 import { State, noteWidth } from "../../data/constants";
+import { nanoid } from "nanoid";
 
 export default function Canvas() {
   const { t } = useTranslation();
@@ -626,7 +627,7 @@ export default function Canvas() {
         startTableId: linkingLine.startTableId, startFieldId: linkingLine.startFieldId,
         endTableId: hoveredTable.tableId, endFieldId: hoveredTable.field
       }, tables),
-      id: relationships.length,
+      id: nanoid(),
     };
     delete newRelationship.startX;
     delete newRelationship.startY;

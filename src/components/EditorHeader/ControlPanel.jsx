@@ -178,7 +178,7 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.NOTE) {
         deleteNote(notes[notes.length - 1].id, false);
       } else if (a.element === ObjectType.RELATIONSHIP) {
-        deleteRelationship(a.data.id, false);
+        deleteRelationship(a.data.relationship.id, false);
       } else if (a.element === ObjectType.TYPE) {
         deleteType(types.length - 1, false);
       } else if (a.element === ObjectType.ENUM) {
@@ -376,7 +376,7 @@ export default function ControlPanel({
       if (a.element === ObjectType.TABLE) {
         deleteTable(a.data.table.id, false);
       } else if (a.element === ObjectType.RELATIONSHIP) {
-        deleteRelationship(a.data.id, false);
+        deleteRelationship(a.data.relationship.id, false);
       } else if (a.element === ObjectType.NOTE) {
         deleteNote(a.data.id, false);
       } else if (a.element === ObjectType.AREA) {
