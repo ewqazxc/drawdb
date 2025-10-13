@@ -624,8 +624,14 @@ export default function Canvas() {
       updateConstraint: Constraint.NONE,
       deleteConstraint: Constraint.NONE,
       name: formatRelationshipName({
-        startTableId: linkingLine.startTableId, startFieldId: linkingLine.startFieldId,
-        endTableId: hoveredTable.tableId, endFieldId: hoveredTable.field
+        linkingLine: {
+          startTableId: linkingLine.startTableId,
+          startFieldId: linkingLine.startFieldId,
+        },
+        hoveredTable: {
+          tableId: hoveredTable.tableId,
+          fieldId: hoveredTable.fieldId,
+        }
       }, tables),
       id: nanoid(),
     };

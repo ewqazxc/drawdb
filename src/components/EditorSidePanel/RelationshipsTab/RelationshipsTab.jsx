@@ -7,9 +7,10 @@ import { ObjectType, State } from "../../../data/constants";
 import { useTranslation } from "react-i18next";
 import { SortableList } from "../../SortableList/SortableList";
 import { DragHandle } from "../../SortableList/DragHandle";
+import LocateTargetPosition from "../../Tools/LocateTargetPosition";
 
 export default function RelationshipsTab() {
-  const { relationships, setRelationships } = useDiagram();
+  const { tables, relationships, setRelationships } = useDiagram();
   const { selectedElement, setSelectedElement } = useSelect();
   const { setSaveState } = useSaveState();
   const { layout } = useLayout();
@@ -56,6 +57,16 @@ export default function RelationshipsTab() {
                   header={
                     <div className="w-full flex items-center gap-2">
                       <DragHandle readOnly={layout.readOnly} id={item.id} />
+                      <LocateTargetPosition
+                        position={() => {
+                          const startTable = tables[item.startTableId];
+                          const endTable = tables[item.endTableId];
+                          return {
+                            x: Math.min(startTable.x, endTable.x),
+                            y: Math.min(startTable.y, endTable.y)
+                          }
+                        }}
+                      />
                       <div className="overflow-hidden text-ellipsis whitespace-nowrap">
                         {item.name}
                       </div>

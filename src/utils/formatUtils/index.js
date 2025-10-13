@@ -1,5 +1,6 @@
 
 export const formatRelationshipName = (idObj, tables) => {
+  console.log('idObj, tables  ::', { idObj, tables });
   const { linkingLine, hoveredTable } = idObj;
 
   const { fields: startTableFields, name: startTableName } = tables.find(
