@@ -125,14 +125,14 @@ export default function Share({ title, setModal }) {
           await updateGist();
         }
       } catch (e) {
-        console.error(e);
         setError(e);
       } finally {
         setLoading(false);
       }
     };
     updateOrGenerateLink();
-  }, [gistId, generateLink, updateGist]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const copyLink = () => {
     navigator.clipboard
