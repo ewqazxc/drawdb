@@ -683,10 +683,12 @@ export default function ControlPanel({
       case ObjectType.TABLE: {
         const copiedTable = tables.find((t) => t.id === selectedElement.id);
         addTable({
-          ...copiedTable,
-          x: copiedTable.x + 20,
-          y: copiedTable.y + 20,
-          id: nanoid(),
+          table: {
+            ...copiedTable,
+            x: copiedTable.x + 20,
+            y: copiedTable.y + 20,
+            id: nanoid(),
+          },
         });
         break;
       }
@@ -749,12 +751,15 @@ export default function ControlPanel({
         return;
       }
       const v = new Validator();
+      console.log(obj);
       if (v.validate(obj, tableSchema).valid) {
         addTable({
-          ...obj,
-          x: obj.x + 20,
-          y: obj.y + 20,
-          id: nanoid(),
+          table: {
+            ...obj,
+            x: obj.x + 20,
+            y: obj.y + 20,
+            id: nanoid(),
+          },
         });
       } else if (v.validate(obj, areaSchema).valid) {
         addArea({
