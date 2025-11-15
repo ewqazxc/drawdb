@@ -40,14 +40,6 @@ function columnDefault(field, database) {
   return `default: ${parseDefaultDbml(field, database)}`;
 }
 
-function columnComment(field) {
-  if (!field.comment || field.comment.trim() === "") {
-    return "";
-  }
-
-  return `note: '${escapeQuotes(field.comment)}'`;
-}
-
 function columnSettings(field, database) {
   let constraints = [];
 
@@ -98,6 +90,23 @@ function processComment(comment) {
   return `'${escapeQuotes(comment)}'`;
 }
 
+function columnComment(field) {
+  if (!field.comment || field.comment.trim() === "") {
+    return "";
+  }
+
+  return `note: ${processComment(field.comment)}`;
+}
+
+function processType(type) {
+  // TODO: remove after a while
+  if (type.toUpperCase() === "TIMESTAMP WITH TIME ZONE") {
+    return "timestamptz";
+  }
+
+  return type.toLowerCase();
+}
+
 export function toDBML(diagram) {
   const generateRelString = (rel) => {
     const { fields: startTableFields, name: startTableName } =
@@ -134,15 +143,14 @@ export function toDBML(diagram) {
         `enum ${quoteIdentifier(en.name)} {\n${en.values.map((v) => `\t${quoteIdentifier(v)}`).join("\n")}\n}\n\n`,
     )
     .join("\n\n")}${enumDefinitions}${diagram.tables
-    .map(
-      (table) =>
-        `Table ${quoteIdentifier(table.name)} [headercolor: ${table.color}] {\n${table.fields
-          .map(
-            (field) =>
-              `\t${quoteIdentifier(field.name)} ${
-                field.type === "ENUM" || field.type === "SET"
+      .map(
+        (table) =>
+          `Table ${quoteIdentifier(table.name)} [headercolor: ${table.color}] {\n${table.fields
+            .map(
+              (field) =>
+                `\t${quoteIdentifier(field.name)} ${field.type === "ENUM" || field.type === "SET"
                   ? quoteIdentifier(`${field.name}_${field.values.join("_")}_t`)
-                  : field.type.toLowerCase()
+                  : processType(field.type)
                 }${fieldSize(
                   field,
                   diagram.database,
@@ -150,17 +158,16 @@ export function toDBML(diagram) {
             )
             .join("\n")}${table.indices.length > 0
             ? "\n\n\tindexes {\n" +
-              table.indices
-                .map(
-                  (index) =>
-                    `\t\t(${index.fields
-                      .map((f) => quoteIdentifier(f))
-                      .join(", ")}) [ name: '${
-                      index.name
-                    }'${index.unique ? ", unique" : ""} ]`,
-                )
-                .join("\n") +
-              "\n\t}"
+            table.indices
+              .map(
+                (index) =>
+                  `\t\t(${index.fields
+                    .map((f) => quoteIdentifier(f))
+                    .join(", ")}) [ name: '${index.name
+                  }'${index.unique ? ", unique" : ""} ]`,
+              )
+              .join("\n") +
+            "\n\t}"
             : ""
           }${table.comment && table.comment.trim() !== ""
             ? `\n\n\tNote: ${processComment(table.comment)}`
