@@ -751,7 +751,6 @@ export default function ControlPanel({
         return;
       }
       const v = new Validator();
-      console.log(obj);
       if (v.validate(obj, tableSchema).valid) {
         addTable({
           table: {
