@@ -182,7 +182,7 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.TYPE) {
         deleteType(a.data.type.id, false);
       } else if (a.element === ObjectType.ENUM) {
-        deleteEnum(enums.length - 1, false);
+        deleteEnum(a.data.enum.id, false);
       }
       setRedoStack((prev) => [...prev, a]);
     } else if (a.action === Action.MOVE) {
@@ -216,7 +216,7 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.TYPE) {
         addType(a.data, false);
       } else if (a.element === ObjectType.ENUM) {
-        addEnum({ id: a.id, ...a.data }, false);
+        addEnum(a.data, false);
       }
       setRedoStack((prev) => [...prev, a]);
     } else if (a.action === Action.EDIT) {
@@ -354,7 +354,7 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.TYPE) {
         addType(a.data, false);
       } else if (a.element === ObjectType.ENUM) {
-        addEnum(null, false);
+        addEnum(a.data, false);
       }
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.MOVE) {
@@ -387,7 +387,7 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.TYPE) {
         deleteType(a.data.type.id, false);
       } else if (a.element === ObjectType.ENUM) {
-        deleteEnum(a.id, false);
+        deleteEnum(a.data.enum.id, false);
       }
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.EDIT) {
@@ -822,11 +822,24 @@ export default function ControlPanel({
           setUndoStack([]);
           setRedoStack([]);
           if (databases[database].hasTypes) {
-            setTypes(diagram.types ?? []);
+            setTypes(
+              diagram.types.map((t) =>
+                t.id
+                  ? t
+                  : {
+                      ...t,
+                      id: nanoid(),
+                      fields: t.fields.map((f) =>
+                        f.id ? f : { ...f, id: nanoid() },
+                      ),
+                    },
+              ),
+            );
           }
-          if (databases[database].hasEnums) {
-            setEnums(diagram.enums ?? []);
-          }
+          setEnums(
+            diagram.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ??
+              [],
+          );
           window.name = `d ${diagram.id}`;
         } else {
           window.name = "";

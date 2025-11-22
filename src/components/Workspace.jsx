@@ -216,7 +216,9 @@ export default function WorkSpace() {
               }
             }
             if (databases[database].hasEnums) {
-              setEnums(d.enums ?? []);
+              setEnums(
+                d.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ?? [],
+              );
             }
             window.name = `d ${d.id}`;
           } else {
@@ -269,8 +271,12 @@ export default function WorkSpace() {
                 setTypes([]);
               }
             }
-            if (databases[initDatabase].hasEnums) {
-              setEnums(diagram.enums ?? []);
+            if (databases[database].hasEnums) {
+              setEnums(
+                diagram.enums.map((e) =>
+                  !e.id ? { ...e, id: nanoid() } : e,
+                ) ?? [],
+              );
             }
             window.name = `d ${diagram.id}`;
           } else {
@@ -324,8 +330,12 @@ export default function WorkSpace() {
                 setTypes([]);
               }
             }
-            if (databases[initDatabase].hasEnums) {
-              setEnums(diagram.enums ?? []);
+            if (databases[database].hasEnums) {
+              setEnums(
+                diagram.enums.map((e) =>
+                  !e.id ? { ...e, id: nanoid() } : e,
+                ) ?? [],
+              );
             }
           } else {
             if (initDatabase === "") setShowSelectDbModal(true);
@@ -379,7 +389,11 @@ export default function WorkSpace() {
           }
         }
         if (databases[parsedDiagram.database].hasEnums) {
-          setEnums(parsedDiagram.enums ?? []);
+          setEnums(
+            parsedDiagram.enums.map((e) =>
+              !e.id ? { ...e, id: nanoid() } : e,
+            ) ?? [],
+          );
         }
       } catch (e) {
         console.error(e);
