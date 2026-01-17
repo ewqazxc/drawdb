@@ -750,8 +750,8 @@ export default function Canvas() {
               }}
             />
           ))}
-          {relationships.map((e, i) => (
-            <Relationship key={i} data={e} />
+          {relationships.map((e) => (
+            <Relationship key={e.id} data={e} />
           ))}
           {tables.map((table) => (
             <Table
