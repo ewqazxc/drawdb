@@ -821,7 +821,7 @@ export default function ControlPanel({
           });
           setUndoStack([]);
           setRedoStack([]);
-          if (databases[database].hasTypes) {
+          if (databases[diagram.database].hasTypes) {
             setTypes(
               diagram.types.map((t) =>
                 t.id
@@ -836,10 +836,12 @@ export default function ControlPanel({
               ),
             );
           }
-          setEnums(
-            diagram.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ??
-              [],
-          );
+          if (databases[diagram.database].hasEnums) {
+            setEnums(
+              diagram.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ??
+                [],
+            );
+          }
           window.name = `d ${diagram.id}`;
         } else {
           window.name = "";
@@ -2082,7 +2084,10 @@ export default function ControlPanel({
                               </Dropdown>
                             );
                           }
-                          if (menu[category][item].warning && !menu[category][item].disabled) {
+                          if (
+                            menu[category][item].warning &&
+                            !menu[category][item].disabled
+                          ) {
                             return (
                               <Popconfirm
                                 key={index}
