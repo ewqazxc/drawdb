@@ -1761,6 +1761,16 @@ export default function ControlPanel({
         <div className="flex justify-start items-center">
           <LayoutDropdown />
           <Divider layout="vertical" margin="8px" />
+          <Tooltip content={t("zoom_out")} position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded-sm text-lg"
+              onClick={() =>
+                setTransform((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }))
+              }
+            >
+              <i className="fa-solid fa-magnifying-glass-minus" />
+            </button>
+          </Tooltip>
           <Dropdown
             style={{ width: "240px" }}
             position={isRtl(i18n.language) ? "bottomRight" : "bottomLeft"}
@@ -1824,16 +1834,6 @@ export default function ControlPanel({
               <i className="fa-solid fa-magnifying-glass-plus" />
             </button>
           </Tooltip>
-          <Tooltip content={t("zoom_out")} position="bottom">
-            <button
-              className="py-1 px-2 hover-2 rounded-sm text-lg"
-              onClick={() =>
-                setTransform((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }))
-              }
-            >
-              <i className="fa-solid fa-magnifying-glass-minus" />
-            </button>
-          </Tooltip>
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("undo")} position="bottom">
             <button
@@ -1891,14 +1891,6 @@ export default function ControlPanel({
               <IconSaveStroked size="extra-large" />
             </button>
           </Tooltip>
-          {/* <Tooltip content={t("versions")} position="bottom">
-            <button
-              className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5"
-              onClick={() => setSidesheet(SIDESHEET.VERSIONS)}
-            >
-              <i className="fa-solid fa-code-branch" />{" "}
-            </button>
-          </Tooltip> */}
           <Tooltip content={t("to_do")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5"
@@ -1908,6 +1900,15 @@ export default function ControlPanel({
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />
+          {/* <Tooltip content={t("versions")} position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5"
+              onClick={() => setSidesheet(SIDESHEET.VERSIONS)}
+            >
+              <i className="fa-solid fa-code-branch" />
+            </button>
+          </Tooltip>
+          <Divider layout="vertical" margin="8px" /> */}
           <Tooltip content={t("theme")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5"
