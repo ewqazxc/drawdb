@@ -59,8 +59,8 @@ export default function RelationshipsTab() {
                       <DragHandle readOnly={layout.readOnly} id={item.id} />
                       <LocateTargetPosition
                         position={() => {
-                          const startTable = tables[item.startTableId];
-                          const endTable = tables[item.endTableId];
+                          const startTable = tables.find((t) => t.id === item.startTableId);
+                          const endTable = tables.find((t) => t.id === item.endTableId);
                           return {
                             x: Math.min(startTable.x, endTable.x),
                             y: Math.min(startTable.y, endTable.y)
